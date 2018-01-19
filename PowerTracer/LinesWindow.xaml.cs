@@ -10,24 +10,23 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace PowerTracer
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for LinesWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class LinesWindow : Window
     {
         Polyline _baseLine;
         Point _currentPoint;
         bool _newLine;
-
-        public MainWindow()
+        public LinesWindow()
         {
             InitializeComponent();
         }
+
         private void OpenCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
