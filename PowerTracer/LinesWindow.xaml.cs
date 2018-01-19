@@ -22,9 +22,16 @@ namespace PowerTracer
         Polyline _baseLine;
         Point _currentPoint;
         bool _newLine;
+        PowerLine testLine_;
         public LinesWindow()
         {
             InitializeComponent();
+            PointCollection pointCollection = new PointCollection();
+            pointCollection.Add(new Point(0, 0));
+            pointCollection.Add(new Point(200, 200));
+            testLine_ = new PowerLine(pointCollection);
+            paintSurface.Children.Add(testLine_.lineObj_);
+            testLine_.Power = 500;
         }
 
         private void OpenCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
