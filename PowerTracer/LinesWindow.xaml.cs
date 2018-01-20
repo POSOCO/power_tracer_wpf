@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,12 +27,18 @@ namespace PowerTracer
         public LinesWindow()
         {
             InitializeComponent();
+
+            // adding a power line to canvas and changing its parameters for testing
             PointCollection pointCollection = new PointCollection();
             pointCollection.Add(new Point(0, 0));
             pointCollection.Add(new Point(200, 200));
             testLine_ = new PowerLine(pointCollection);
+
             paintSurface.Children.Add(testLine_.lineObj_);
+
             testLine_.Power = 500;
+            testLine_.LinePoints.Add(new Point(200, 250));
+            // paintSurface.Children.Remove(testLine_.lineObj_);
         }
 
         private void OpenCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -72,9 +79,18 @@ namespace PowerTracer
             addLinesToConsole("You clicked 'Reset...'");
         }
 
+        private void NewWindow_Click(object sender, RoutedEventArgs e)
+        {
+            addLinesToConsole("Opening another window...");
+            LinesWindow linesWindow = new LinesWindow();
+            linesWindow.Show();
+        }
+
         private void TestBtn_Click(object sender, RoutedEventArgs e)
         {
             addLinesToConsole("You clicked 'Test Button...'");
+            LinesJSONFetcher linesJSONFetcher = new LinesJSONFetcher();
+            linesJSONFetcher.fetchLayers("");
         }
 
         private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
@@ -128,6 +144,48 @@ namespace PowerTracer
                 line.Opacity = 1.0;
             }
         }
+
+        public void drawLines(DateTime startTime)
+        {
+            object payLoad = new { startTime = startTime};
+            // addLinesToConsole("Started fetching data");
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.DoWork += worker_DoWork;
+            worker.ProgressChanged += worker_ProgressChanged;
+            worker.RunWorkerCompleted += worker_RunWorkerCompleted;
+            worker.RunWorkerAsync(payLoad);
+        }
+
+        void worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            object argument = e.Argument;
+            int dataRate = (int)argument.GetType().GetProperty("dataRate").GetValue(argument, null);
+            DateTime startTime = (DateTime)argument.GetType().GetProperty("startTime").GetValue(argument, null);
+            DateTime endTime = (DateTime)argument.GetType().GetProperty("endTime").GetValue(argument, null);
+            List<int> measurementIDs = (List<int>)argument.GetType().GetProperty("measurementIDs").GetValue(argument, null);
+            List<string> measurementNames = (List<string>)argument.GetType().GetProperty("measurementNames").GetValue(argument, null);
+            e.Result = new { startTime = startTime, endTime = endTime, dataRate = dataRate, measurementIDs = measurementIDs, measurementNames = measurementNames };
+        }
+
+        // created by sudhir on 30.12.2017
+        // worker thread ui update stuff
+        void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+
+        }
+
+        // created by sudhir on 30.12.2017
+        // worker thread completed stuff
+        void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            addLinesToConsole("Finished fetching data");
+            object res = e.Result;
+            List<int> measurementIDs = (List<int>)res.GetType().GetProperty("measurementIDs").GetValue(res, null);
+            List<string> measurementNames = (List<string>)res.GetType().GetProperty("measurementNames").GetValue(res, null);
+            int dataRate = (int)res.GetType().GetProperty("dataRate").GetValue(res, null);
+        }
+
 
         public void addLinesToConsole(string str)
         {

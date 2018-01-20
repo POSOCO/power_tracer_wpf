@@ -36,6 +36,7 @@
                     <MenuItem Header="PanOff" Tag="POff" Click="Pan_Click" IsCheckable="True"/>
                 </MenuItem>
                 <MenuItem Header="Reset" Click="Reset_Click"></MenuItem>
+                <MenuItem Header="New Window" Click="NewWindow_Click"></MenuItem>
             </Menu>
         </StackPanel>
         <ScrollViewer Margin="5" CanContentScroll="False"
