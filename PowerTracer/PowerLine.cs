@@ -14,8 +14,6 @@ namespace PowerTracer
     public class PowerLine : INotifyPropertyChanged
     {
         // todo implement color display strategies also like severity, voltage, plain
-        public Polyline lineObj_;
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void NotifyPropertyChanged(string info)
@@ -29,29 +27,7 @@ namespace PowerTracer
         public PowerLine(PointCollection points)
         {
             // Iniliatise the polyline and set the bindings and event listeners
-
-            lineObj_ = new Polyline();
-
-            lineObj_.MouseEnter += delegate (object sender, MouseEventArgs e) { ShowHideHighlight(sender, e, EnterOrLeave.Enter, this); };
-            lineObj_.MouseLeave += delegate (object sender, MouseEventArgs e) { ShowHideHighlight(sender, e, EnterOrLeave.Leave, this); };
-
-            // bind line points
-            Binding pointsBinding = new Binding("LinePoints");
-            pointsBinding.Source = this;
-            lineObj_.SetBinding(Polyline.PointsProperty, pointsBinding);
-
             LinePoints = points;
-
-            // bind line thickness
-            Binding thicknessBinding = new Binding("Thickness");
-            thicknessBinding.Source = this;
-            lineObj_.SetBinding(Polyline.StrokeThicknessProperty, thicknessBinding);
-
-            // bind line color
-            Binding colorBinding = new Binding("Color");
-            colorBinding.Source = this;
-            colorBinding.Converter = new ColorBrushConverter();
-            lineObj_.SetBinding(Polyline.StrokeProperty, colorBinding);
         }
 
         public PointCollection linePoints_;
@@ -70,10 +46,7 @@ namespace PowerTracer
 
         public PointCollection LinePoints
         {
-            get
-            {
-                return linePoints_;
-            }
+            get { return linePoints_; }
             set
             {
                 linePoints_ = value;
@@ -94,10 +67,7 @@ namespace PowerTracer
 
         public bool IsHighLighted
         {
-            get
-            {
-                return isHighLighted_;
-            }
+            get { return isHighLighted_; }
             set
             {
                 isHighLighted_ = value;
@@ -189,56 +159,6 @@ namespace PowerTracer
                     return pixelsPerNominalPower_ * power_ / nominalFlow_;
                 }
             }
-        }
-
-        private static void ShowHideHighlight(object sender, MouseEventArgs e, EnterOrLeave enterOrLeave, PowerLine powerLine)
-        {
-            // http://www.c-sharpcorner.com/blogs/passing-parameters-to-events-c-sharp1
-            Polyline line = sender as Polyline;
-            if (powerLine.lineObj_ != null)
-            {
-                if (enterOrLeave == EnterOrLeave.Enter)
-                {
-                    powerLine.IsHighLighted = true;
-                }
-                else
-                {
-                    powerLine.IsHighLighted = false;
-                }
-            }
-        }
-
-        public class ColorBrushConverter : IValueConverter
-        {
-            // https://stackoverflow.com/questions/3309709/how-do-i-convert-a-color-to-a-brush-in-xaml
-            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                if (value == null)
-                    return null;
-
-                if (value is Color)
-                    return new SolidColorBrush((Color)value);
-
-                throw new InvalidOperationException("Unsupported type [" + value.GetType().Name + "], ColorToSolidColorBrushValueConverter.Convert()");
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                // useful incase of two way binding. Right it doesnot work
-                if (value == null)
-                    return null;
-
-                if (value is SolidColorBrush)
-                    return ((SolidColorBrush)value).Color;
-
-                throw new InvalidOperationException("Unsupported type [" + value.GetType().Name + "], ColorToSolidColorBrushValueConverter.ConvertBack()");
-            }
-        }
-
-        private enum EnterOrLeave
-        {
-            Enter,
-            Leave
         }
 
         public enum DisplayStrategyEnum

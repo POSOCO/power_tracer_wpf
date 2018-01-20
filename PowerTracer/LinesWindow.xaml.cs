@@ -23,22 +23,11 @@ namespace PowerTracer
         Polyline _baseLine;
         Point _currentPoint;
         bool _newLine;
-        PowerLine testLine_;
+        PowerLine testline_;
         public LinesWindow()
         {
             InitializeComponent();
-
-            // adding a power line to canvas and changing its parameters for testing
-            PointCollection pointCollection = new PointCollection();
-            pointCollection.Add(new Point(0, 0));
-            pointCollection.Add(new Point(200, 200));
-            testLine_ = new PowerLine(pointCollection);
-
-            paintSurface.Children.Add(testLine_.lineObj_);
-
-            testLine_.Power = 500;
-            testLine_.LinePoints.Add(new Point(200, 250));
-            // paintSurface.Children.Remove(testLine_.lineObj_);
+            testLineDraw();
         }
 
         private void OpenCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -144,6 +133,97 @@ namespace PowerTracer
                 line.Opacity = 1.0;
             }
         }
+
+        private static void ShowHideHighlight(object sender, MouseEventArgs e, EnterOrLeave enterOrLeave, PowerLine powerLine)
+        {
+            // http://www.c-sharpcorner.com/blogs/passing-parameters-to-events-c-sharp1
+            if (powerLine != null)
+            {
+                if (enterOrLeave == EnterOrLeave.Enter)
+                {
+                    powerLine.IsHighLighted = true;
+                }
+                else
+                {
+                    powerLine.IsHighLighted = false;
+                }
+            }
+        }
+
+        private enum EnterOrLeave
+        {
+            Enter,
+            Leave
+        }
+
+        public class ColorBrushConverter : IValueConverter
+        {
+            // https://stackoverflow.com/questions/3309709/how-do-i-convert-a-color-to-a-brush-in-xaml
+            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                if (value == null)
+                    return null;
+
+                if (value is Color)
+                    return new SolidColorBrush((Color)value);
+
+                throw new InvalidOperationException("Unsupported type [" + value.GetType().Name + "], ColorToSolidColorBrushValueConverter.Convert()");
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                // useful incase of two way binding. Right it doesnot work
+                if (value == null)
+                    return null;
+
+                if (value is SolidColorBrush)
+                    return ((SolidColorBrush)value).Color;
+
+                throw new InvalidOperationException("Unsupported type [" + value.GetType().Name + "], ColorToSolidColorBrushValueConverter.ConvertBack()");
+            }
+        }
+
+        public void testLineDraw()
+        {
+            // Initializing a power line
+            testline_ = new PowerLine(new PointCollection());
+
+            // Using the PowerLine Object for creating a Polyline that is bound to the object
+            Polyline lineObj_ = new Polyline();
+
+            //setting the lineObj_ MouseEnter and MouseLeave events for hover highlight effect
+            lineObj_.MouseEnter += delegate (object sender, MouseEventArgs e) { ShowHideHighlight(sender, e, EnterOrLeave.Enter, testline_); };
+            lineObj_.MouseLeave += delegate (object sender, MouseEventArgs e) { ShowHideHighlight(sender, e, EnterOrLeave.Leave, testline_); };
+
+            // bind line points
+            Binding pointsBinding = new Binding("LinePoints");
+            pointsBinding.Source = testline_;
+            lineObj_.SetBinding(Polyline.PointsProperty, pointsBinding);
+
+            // bind line thickness
+            Binding thicknessBinding = new Binding("Thickness");
+            thicknessBinding.Source = testline_;
+            lineObj_.SetBinding(Polyline.StrokeThicknessProperty, thicknessBinding);
+
+            // bind line color
+            Binding colorBinding = new Binding("Color");
+            colorBinding.Source = testline_;
+            colorBinding.Converter = new ColorBrushConverter();
+            lineObj_.SetBinding(Polyline.StrokeProperty, colorBinding);
+
+            paintSurface.Children.Add(lineObj_);
+
+            //Changing PowerLine object parameters for testing the binding
+            testline_.Power = 500;
+            PointCollection pointCollection = new PointCollection();
+            pointCollection.Add(new Point(0, 0));
+            pointCollection.Add(new Point(200, 200));
+            testline_.LinePoints = pointCollection;
+            testline_.LinePoints.Add(new Point(200, 250));
+
+            // paintSurface.Children.Remove(lineObj_);
+        }
+
 
         public void drawLines(DateTime startTime)
         {
