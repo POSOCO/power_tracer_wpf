@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,14 +21,15 @@ namespace PowerTracer
     /// </summary>
     public partial class LinesWindow : Window
     {
-        Polyline _baseLine;
-        Point _currentPoint;
-        bool _newLine;
         PowerLine testline_;
+        List<PowerLineLayer> layers_;
+        LinesJSONFetcher jsonParser_ = new LinesJSONFetcher();
+
         public LinesWindow()
         {
             InitializeComponent();
-            testLineDraw();
+            // testLineDraw();
+            paintLayers();
         }
 
         private void OpenCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -51,6 +53,12 @@ namespace PowerTracer
         {
             AboutWindow aboutWindow = new AboutWindow();
             aboutWindow.Show();
+        }
+
+        private void Draw_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.Show();
         }
 
         private void Zoom_Click(object sender, RoutedEventArgs e)
@@ -78,60 +86,6 @@ namespace PowerTracer
         private void TestBtn_Click(object sender, RoutedEventArgs e)
         {
             addLinesToConsole("You clicked 'Test Button...'");
-            LinesJSONFetcher linesJSONFetcher = new LinesJSONFetcher();
-            linesJSONFetcher.fetchLayers("");
-        }
-
-        private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            _newLine = true;
-        }
-
-        private void Canvas_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (_baseLine != null && !_newLine)
-            {
-                _baseLine.MouseEnter += ShowHighlight;
-                _baseLine.MouseLeave += HideHighlight;
-            }
-        }
-
-        private void Canvas_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                if (_newLine)
-                {
-                    _baseLine = new Polyline
-                    {
-                        Stroke = new SolidColorBrush(Colors.Red),
-                        StrokeThickness = 5.0
-                    };
-                    paintSurface.Children.Add(_baseLine);
-                    _newLine = false;
-                }
-
-                _currentPoint = e.GetPosition(this);
-                _baseLine.Points.Add(_currentPoint);
-            }
-        }
-
-        private void ShowHighlight(object sender, MouseEventArgs e)
-        {
-            var line = sender as Polyline;
-            if (line != null)
-            {
-                line.Opacity = 0.5;
-            }
-        }
-
-        private void HideHighlight(object sender, MouseEventArgs e)
-        {
-            var line = sender as Polyline;
-            if (line != null)
-            {
-                line.Opacity = 1.0;
-            }
         }
 
         private static void ShowHideHighlight(object sender, MouseEventArgs e, EnterOrLeave enterOrLeave, PowerLine powerLine)
@@ -186,7 +140,7 @@ namespace PowerTracer
         public void testLineDraw()
         {
             // Initializing a power line
-            testline_ = new PowerLine(new PointCollection());
+            testline_ = new PowerLine();
 
             // Using the PowerLine Object for creating a Polyline that is bound to the object
             Polyline lineObj_ = new Polyline();
@@ -224,10 +178,53 @@ namespace PowerTracer
             // paintSurface.Children.Remove(lineObj_);
         }
 
-
-        public void drawLines(DateTime startTime)
+        public void paintLayers()
         {
-            object payLoad = new { startTime = startTime};
+            layers_ = jsonParser_.fetchLayers(File.ReadAllText("lines_ddl.json"));
+
+            foreach (PowerLineLayer layer in layers_)
+            {
+                if (layer.name_ != "765KV")
+                {
+                    continue;
+                }
+                foreach (PowerLine line in layer.layerLines_)
+                {
+                    // Using the PowerLine Object for creating a Polyline that is bound to the object
+                    Polyline lineObj_ = new Polyline();
+                    //setting the lineObj_ MouseEnter and MouseLeave events for hover highlight effect
+                    lineObj_.MouseEnter += delegate (object sender, MouseEventArgs e) { ShowHideHighlight(sender, e, EnterOrLeave.Enter, line); };
+                    lineObj_.MouseLeave += delegate (object sender, MouseEventArgs e) { ShowHideHighlight(sender, e, EnterOrLeave.Leave, line); };
+
+                    // bind line points
+                    Binding pointsBinding = new Binding("LinePoints");
+                    pointsBinding.Source = line;
+                    lineObj_.SetBinding(Polyline.PointsProperty, pointsBinding);
+
+                    // bind line thickness
+                    Binding thicknessBinding = new Binding("Thickness");
+                    thicknessBinding.Source = line;
+                    lineObj_.SetBinding(Polyline.StrokeThicknessProperty, thicknessBinding);
+
+                    // bind line color
+                    Binding colorBinding = new Binding("Color");
+                    colorBinding.Source = line;
+                    colorBinding.Converter = new ColorBrushConverter();
+                    lineObj_.SetBinding(Polyline.StrokeProperty, colorBinding);
+
+                    // draw line on the canvas
+                    paintSurface.Children.Add(lineObj_);
+
+                    // initialize line power for testing
+                    line.Power = 100;
+                }
+
+            }
+        }
+
+        public void drawLines()
+        {
+            object payLoad = new { dataRate = 25 };
             // addLinesToConsole("Started fetching data");
             BackgroundWorker worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
@@ -241,28 +238,20 @@ namespace PowerTracer
         {
             object argument = e.Argument;
             int dataRate = (int)argument.GetType().GetProperty("dataRate").GetValue(argument, null);
-            DateTime startTime = (DateTime)argument.GetType().GetProperty("startTime").GetValue(argument, null);
-            DateTime endTime = (DateTime)argument.GetType().GetProperty("endTime").GetValue(argument, null);
-            List<int> measurementIDs = (List<int>)argument.GetType().GetProperty("measurementIDs").GetValue(argument, null);
-            List<string> measurementNames = (List<string>)argument.GetType().GetProperty("measurementNames").GetValue(argument, null);
-            e.Result = new { startTime = startTime, endTime = endTime, dataRate = dataRate, measurementIDs = measurementIDs, measurementNames = measurementNames };
+            e.Result = new { dataRate = 25 };
         }
 
-        // created by sudhir on 30.12.2017
         // worker thread ui update stuff
         void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
 
         }
 
-        // created by sudhir on 30.12.2017
         // worker thread completed stuff
         void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            addLinesToConsole("Finished fetching data");
+            addLinesToConsole("Finished task");
             object res = e.Result;
-            List<int> measurementIDs = (List<int>)res.GetType().GetProperty("measurementIDs").GetValue(res, null);
-            List<string> measurementNames = (List<string>)res.GetType().GetProperty("measurementNames").GetValue(res, null);
             int dataRate = (int)res.GetType().GetProperty("dataRate").GetValue(res, null);
         }
 

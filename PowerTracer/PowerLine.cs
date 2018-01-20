@@ -24,13 +24,12 @@ namespace PowerTracer
             }
         }
 
-        public PowerLine(PointCollection points)
+        public PowerLine()
         {
-            // Iniliatise the polyline and set the bindings and event listeners
-            LinePoints = points;
+
         }
 
-        public PointCollection linePoints_;
+        public PointCollection linePoints_ = new PointCollection();
         public double power_;
         public Color color_ = Color.FromRgb(255, 0, 0); // default red color
         public bool isHighLighted_;
