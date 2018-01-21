@@ -74,6 +74,7 @@ namespace PowerTracer
                 NotifyPropertyChanged("Color");
             }
         }
+
         public Color Color
         {
             get
