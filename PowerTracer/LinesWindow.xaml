@@ -47,13 +47,33 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Button Name="TestBtn" Click="TestBtn_Click">Test</Button>
-                <Canvas Grid.Row="1" Name="paintSurface" Background="Black">
+
+                <Canvas Grid.Row="1" Name="paintSurface" Background="Black" ClipToBounds="True">
 
                 </Canvas>
-                <ScrollViewer CanContentScroll="False" Grid.Row="2"
-              VerticalScrollBarVisibility ="Auto" HorizontalScrollBarVisibility="Auto" MaxHeight="75">
+
+                <ScrollViewer VerticalScrollBarVisibility ="Auto" HorizontalScrollBarVisibility="Auto" Height="40" HorizontalAlignment="Left" MaxWidth="500" Grid.Row="2">
+                    <ItemsControl Name="layerSelectionItemList">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <WrapPanel>
+                                    <CheckBox IsChecked="{Binding isVisible_}" />
+                                    <Label Content="{Binding name_}" />
+                                </WrapPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <ScrollViewer CanContentScroll="False" Grid.Row="3" VerticalScrollBarVisibility ="Auto" HorizontalScrollBarVisibility="Auto" Height="75">
                     <TextBox Name="WelcomeText" Text="Hello World!" AcceptsReturn="True"></TextBox>
                 </ScrollViewer>
             </Grid>

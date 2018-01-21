@@ -11,5 +11,6 @@ namespace PowerTracer
     {
         public string name_ { get; set; }
         public List<PowerLine> layerLines_ { get; set; }
+        public bool isVisible_ { get; set; } = true;
     }
 }

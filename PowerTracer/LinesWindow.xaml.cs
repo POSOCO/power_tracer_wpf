@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -22,12 +23,17 @@ namespace PowerTracer
     public partial class LinesWindow : Window
     {
         PowerLine testline_;
-        List<PowerLineLayer> layers_;
+        ObservableCollection<PowerLineLayer> layers_;
         LinesJSONFetcher jsonParser_ = new LinesJSONFetcher();
 
         public LinesWindow()
         {
             InitializeComponent();
+            DataContext = this;
+
+            layers_ = new ObservableCollection<PowerLineLayer>(jsonParser_.fetchLayers(File.ReadAllText("lines_ddl.json")));
+            layerSelectionItemList.ItemsSource = layers_;
+            
             // testLineDraw();
             paintLayers();
         }
@@ -180,11 +186,9 @@ namespace PowerTracer
 
         public void paintLayers()
         {
-            layers_ = jsonParser_.fetchLayers(File.ReadAllText("lines_ddl.json"));
-
             foreach (PowerLineLayer layer in layers_)
             {
-                if (layer.name_ != "765KV")
+                if (layer.isVisible_ != true)
                 {
                     continue;
                 }
@@ -197,6 +201,7 @@ namespace PowerTracer
                     lineObj_.MouseLeave += delegate (object sender, MouseEventArgs e) { ShowHideHighlight(sender, e, EnterOrLeave.Leave, line); };
 
                     // bind line points
+                    // todo set points explicitly for eacch repaint and remove lines from canvas children if out of bounds
                     Binding pointsBinding = new Binding("LinePoints");
                     pointsBinding.Source = line;
                     lineObj_.SetBinding(Polyline.PointsProperty, pointsBinding);
