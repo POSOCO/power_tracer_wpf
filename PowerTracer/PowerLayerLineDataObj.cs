@@ -10,6 +10,13 @@ namespace PowerTracer
 {
     class PowerLayerLineDataObj : INotifyPropertyChanged
     {
+        /*
+        Data object properties are power, voltage, linePoints, name, address, nominal flow, alertFlows
+        The changes we notify for changes in mapboard are power, linePoints, name, nominal flow, alertFlows
+        Changes to notify in future - voltage, address 
+        Notifying above changes is not required since we are assume that they are set only once
+            */
+
         public PowerLayerLineDataObj()
         {
 
@@ -42,6 +49,16 @@ namespace PowerTracer
                 NotifyPropertyChanged("LinePoints");
             }
         }
+        
+        public double Power
+        {
+            get { return power_; }
+            set
+            {
+                power_ = value;
+                NotifyPropertyChanged("Power");
+            }
+        }
 
         public List<float> AlertFlows
         {
@@ -50,16 +67,6 @@ namespace PowerTracer
             {
                 alertFlows_ = value;
                 NotifyPropertyChanged("AlertFlows");
-            }
-        }
-
-        public double Power
-        {
-            get { return power_; }
-            set
-            {
-                power_ = value;
-                NotifyPropertyChanged("Power");
             }
         }
 

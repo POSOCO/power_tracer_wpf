@@ -11,8 +11,17 @@ namespace PowerTracer
 {
     class PowerLayerLineObj : INotifyPropertyChanged
     {
+        /*
+        The Power line object has a data object and a polyline(ui object).
+        Data object properties are power, voltage, linePoints, name, address, nominal flow, alertFlows
+        Polyline (UI Object) additional property stored is IsHighLighted
+        The changes we notify for changes in mapboard are power, linePoints, IsHighLighted
+        Changes to notify in future - voltage, name, address, nominal Flow, alertFlows. 
+        Notifying above changes is not required since we are assume that they are set only once
+            */
         public PowerLayerLineDataObj lineDataObj_ { get; set; }
         public Polyline polyLine_ { get; set; } = new Polyline();
+
         public bool isHighLighted_ = false;
 
         public bool IsHighLighted

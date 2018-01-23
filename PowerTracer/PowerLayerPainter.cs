@@ -5,12 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace PowerTracer
 {
     class PowerLayerPainter
     {
+        /*
+        The Power Layer Painter has a painting parameters, canvasZoom, canvasPan and listeners to changes in dataObjects so as to update the UI objects
+            */
         // set the painter parameters
         public Color color_ = Color.FromRgb(255, 0, 0); // default red color
         public Color highlightColor_ { get; set; } = Color.FromRgb(255, 255, 255); // default white highlight color
@@ -19,6 +24,7 @@ namespace PowerTracer
         public double pixelsPerNominalPower_ = 2;
         public Point zoom_ = new Point(0.2, 0.2);
         public Point pan_ = new Point(1.0, 1.0);
+        public Canvas canvas_ { get; set; }
 
         public Color getPowerLineColor(PowerLayerLineObj lineObj)
         {
@@ -51,7 +57,7 @@ namespace PowerTracer
         {
             // determine line points
             PointCollection linePnts = lineObj.lineDataObj_.LinePoints;
-            
+
             // transform them according to the zoom and pan values
             for (int i = 0; i < linePnts.Count; i++)
             {
@@ -66,8 +72,13 @@ namespace PowerTracer
         // todo determine if line is in canvas bounds so that the line can be removed from canvas children
         // todo perform line updates only if line is visible, i.e., present on the canvas
 
-        // listener that subscribes for line object change event
-        private void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
+        public void addElementToCanvas(Canvas canvas, Polyline line)
+        {
+            canvas.Children.Add(line);
+        }
+
+        // listener that subscribes for line and layer object prperty change events
+        public void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
@@ -85,6 +96,17 @@ namespace PowerTracer
                     // get the lineDataObject and update the Polyline points
                     lineObj = sender as PowerLayerLineObj;
                     lineObj.polyLine_.Points = getPowerLineCanvasPoints(lineObj);
+                    break;
+                case "LayerName":
+                    // do something
+                    break;
+                case "LineAdded":
+                    // add line to canvas
+                    lineObj = sender as PowerLayerLineObj;
+                    if (lineObj != null)
+                    {
+                        canvas_.Children.Add(lineObj.polyLine_);
+                    }
                     break;
             }
         }
