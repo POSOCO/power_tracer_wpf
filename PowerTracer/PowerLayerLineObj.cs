@@ -19,7 +19,7 @@ namespace PowerTracer
         Changes to notify in future - voltage, name, address, nominal Flow, alertFlows. 
         Notifying above changes is not required since we are assume that they are set only once
             */
-        public PowerLayerLineDataObj lineDataObj_ { get; set; }
+        public PowerLayerLineDataObj lineDataObj_ { get; set; } = new PowerLayerLineDataObj();
         public Polyline polyLine_ { get; set; } = new Polyline();
 
         public bool isHighLighted_ = false;
@@ -40,7 +40,7 @@ namespace PowerTracer
             //setting the lineObj_ MouseEnter and MouseLeave events for hover highlight effect
             polyLine_.MouseEnter += delegate (object sender, MouseEventArgs e) { ShowHideHighlight(sender, e, EnterOrLeave.Enter, this); };
             polyLine_.MouseLeave += delegate (object sender, MouseEventArgs e) { ShowHideHighlight(sender, e, EnterOrLeave.Leave, this); };
-            
+
             // subscribe to the property changes in lineDataObject so that we can notify the painter
             lineDataObj_.PropertyChanged += HandlePropertyChanged;
         }
@@ -56,7 +56,7 @@ namespace PowerTracer
         }
 
         // listener that subscribes for line object change event
-        private void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
+        public void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {

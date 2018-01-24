@@ -24,7 +24,7 @@ namespace PowerTracer
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged(string info)
+        public void NotifyPropertyChanged(string info)
         {
             if (PropertyChanged != null)
             {
@@ -33,10 +33,10 @@ namespace PowerTracer
         }
 
         public PointCollection linePoints_ = new PointCollection();
-        public double power_;
-        public int voltage_ { get; set; }
+        public double power_ = 100.0;
+        public int voltage_ { get; set; } = 0;
         public string name_ = "Unknown"; // default line name as unknown
-        public string address_ { get; set; }
+        public string address_ { get; set; } = "";
         public double nominalFlow_ = 1.0;
         public List<float> alertFlows_ { get; set; } = new List<float>(); // default empty alert flows list
 

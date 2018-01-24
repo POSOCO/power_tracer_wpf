@@ -80,7 +80,7 @@ namespace PowerTracer
                 foreach (dynamic jsonLayer in jsonLayers.layers)
                 {
                     PowerLayerObj layer = new PowerLayerObj();
-                    layer.LayerName = jsonLayer.name;
+                    layer.layerName_ = jsonLayer.name;
                     // Console.WriteLine("\t" + jsonLayer.name);
                     //stub
                     foreach (dynamic layerLine in jsonLayer.polyLines)

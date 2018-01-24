@@ -11,7 +11,7 @@ using System.Windows.Shapes;
 
 namespace PowerTracer
 {
-    class PowerLayerPainter
+    class PowerLayerPainter : INotifyPropertyChanged
     {
         /*
         The Power Layer Painter has a painting parameters, canvasZoom, canvasPan and listeners to changes in dataObjects so as to update the UI objects
@@ -23,8 +23,40 @@ namespace PowerTracer
         public double pixelsPerMW_ = 0.02;
         public double pixelsPerNominalPower_ = 2;
         public Point zoom_ = new Point(0.2, 0.2);
-        public Point pan_ = new Point(1.0, 1.0);
+        public Point pan_ = new Point(0, 0);
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged(string info)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(info));
+            }
+        }
+
         public Canvas canvas_ { get; set; }
+        public Point Zoom
+        {
+            get { return zoom_; }
+            set
+            {
+                zoom_ = value;
+                // todo recalculate layer polylines points
+                NotifyPropertyChanged("Zoom");
+            }
+        }
+
+        public Point Pan
+        {
+            get { return pan_; }
+            set
+            {
+                pan_ = value;
+                // todo recalculate layer polylines points
+                NotifyPropertyChanged("Pan");
+            }
+        }
 
         public Color getPowerLineColor(PowerLayerLineObj lineObj)
         {
@@ -61,8 +93,8 @@ namespace PowerTracer
             // transform them according to the zoom and pan values
             for (int i = 0; i < linePnts.Count; i++)
             {
-                double newX = (linePnts.ElementAt(i).X + pan_.X) / zoom_.X;
-                double newY = (linePnts.ElementAt(i).Y + pan_.Y) / zoom_.Y;
+                double newX = (linePnts.ElementAt(i).X + pan_.X) * zoom_.X;
+                double newY = (linePnts.ElementAt(i).Y + pan_.Y) * zoom_.Y;
                 linePnts[i] = new Point(newX, newY);
             }
 
@@ -72,9 +104,14 @@ namespace PowerTracer
         // todo determine if line is in canvas bounds so that the line can be removed from canvas children
         // todo perform line updates only if line is visible, i.e., present on the canvas
 
-        public void addElementToCanvas(Canvas canvas, Polyline line)
+        public void addElementToCanvas(Polyline line)
         {
-            canvas.Children.Add(line);
+            canvas_.Children.Add(line);
+        }
+
+        public void removeElementFromCanvas(Polyline line)
+        {
+            canvas_.Children.Remove(line);
         }
 
         // listener that subscribes for line and layer object prperty change events
@@ -100,13 +137,28 @@ namespace PowerTracer
                 case "LayerName":
                     // do something
                     break;
-                case "LineAdded":
-                    // add line to canvas
-                    lineObj = sender as PowerLayerLineObj;
-                    if (lineObj != null)
+                case "IsLayerVisible":
+                    var layerObj = sender as PowerLayerObj;
+                    bool isVisible = layerObj.IsLayerVisible;
+                    foreach (PowerLayerLineObj powerLayerLineObj in layerObj.powerLayerLineObjs_)
                     {
-                        canvas_.Children.Add(lineObj.polyLine_);
+                        if (isVisible)
+                        {
+                            // add all the layer lines to the canvas if isVisible is true
+                            addElementToCanvas(powerLayerLineObj.polyLine_);
+                        }
+                        else
+                        {
+                            // remove all the layer lines from the canvas if isVisible is false
+                            removeElementFromCanvas(powerLayerLineObj.polyLine_);
+                        }
                     }
+                    break;
+                case "LineAdded":
+                    // do something
+                    break;
+                case "LineRemoved":
+                    // do something
                     break;
             }
         }

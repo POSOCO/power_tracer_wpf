@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -25,17 +25,19 @@ namespace PowerTracer
         PowerLine testline_;
         ObservableCollection<PowerLineLayer> layers_;
         LinesJSONFetcher jsonParser_ = new LinesJSONFetcher();
+        PowerMap powerMap_;
 
         public LinesWindow()
         {
             InitializeComponent();
             DataContext = this;
 
-            layers_ = new ObservableCollection<PowerLineLayer>(jsonParser_.fetchLayers(File.ReadAllText("lines_ddl.json")));
-            layerSelectionItemList.ItemsSource = layers_;
-            
+            //layers_ = new ObservableCollection<PowerLineLayer>(jsonParser_.fetchLayers(File.ReadAllText("lines_ddl.json")));
+            //layerSelectionItemList.ItemsSource = layers_;
+
             // testLineDraw();
-            paintLayers();
+            //paintLayers();
+            powerMap_ = new PowerMap(paintSurface);
         }
 
         private void OpenCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)

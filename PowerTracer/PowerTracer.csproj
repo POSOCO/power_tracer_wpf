@@ -78,6 +78,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="PowerLayerLineObj.cs" />
+    <Compile Include="PowerLayerObj.cs" />
+    <Compile Include="PowerLayerLineDataObj.cs" />
+    <Compile Include="PowerLayerPainter.cs" />
     <Compile Include="PowerLineLayer.cs" />
     <Compile Include="LinesJSONFetcher.cs" />
     <Compile Include="LinesWindow.xaml.cs">
@@ -90,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PowerLine.cs" />
+    <Compile Include="PowerMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

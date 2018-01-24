@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace PowerTracer
 {
     class PowerMap
     {
-        ObservableCollection<PowerLayerObj> powerLayers_ { get; set; }
+        ObservableCollection<PowerLayerObj> powerLayers_ { get; set; } = new ObservableCollection<PowerLayerObj>();
         public PowerLayerPainter painter_ { get; set; }
         LinesJSONFetcher linesJSONFetcher_;
 
@@ -25,11 +22,74 @@ namespace PowerTracer
 
             painter_.canvas_ = canvas;
 
-            powerLayers_.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler
-(CollectionChangedMethod);
-            
+            powerLayers_.CollectionChanged += new NotifyCollectionChangedEventHandler(CollectionChangedMethod);
+
             // initialte the layers from the json file
-            powerLayers_ = new ObservableCollection<PowerLayerObj>(linesJSONFetcher_.fetchPowerLayerObjs(File.ReadAllText("lines_ddl.json")));
+            List<PowerLayerObj> layerObjs = linesJSONFetcher_.fetchPowerLayerObjs(File.ReadAllText("lines_ddl.json"));
+            foreach (PowerLayerObj layerObj in layerObjs)
+            {
+                powerLayers_.Add(layerObj);
+            }            
+
+            // temporary
+            recalculatePolylines();
+            assignLinePowers();
+            assignLineColors();
+            paintLayers();
+        }
+
+        public void paintLayers()
+        {
+            foreach (PowerLayerObj powerLayerObj in powerLayers_)
+            {
+                bool isVisible = powerLayerObj.IsLayerVisible;
+                foreach (PowerLayerLineObj powerLayerLineObj in powerLayerObj.powerLayerLineObjs_)
+                {
+                    if (isVisible)
+                    {
+                        // add all the layer lines to the canvas if isVisible is true
+                        painter_.addElementToCanvas(powerLayerLineObj.polyLine_);
+                    }
+                    else
+                    {
+                        // remove all the layer lines from the canvas if isVisible is false
+                        painter_.removeElementFromCanvas(powerLayerLineObj.polyLine_);
+                    }
+                }
+            }
+        }
+
+        public void recalculatePolylines()
+        {
+            foreach (PowerLayerObj powerLayerObj in powerLayers_)
+            {
+                foreach (PowerLayerLineObj powerLayerLineObj in powerLayerObj.powerLayerLineObjs_)
+                {
+                    powerLayerLineObj.polyLine_.Points = painter_.getPowerLineCanvasPoints(powerLayerLineObj);
+                }
+            }
+        }
+
+        public void assignLinePowers()
+        {
+            foreach (PowerLayerObj powerLayerObj in powerLayers_)
+            {
+                foreach (PowerLayerLineObj powerLayerLineObj in powerLayerObj.powerLayerLineObjs_)
+                {
+                    powerLayerLineObj.lineDataObj_.Power = 100.0;
+                }
+            }
+        }
+
+        public void assignLineColors()
+        {
+            foreach (PowerLayerObj powerLayerObj in powerLayers_)
+            {
+                foreach (PowerLayerLineObj powerLayerLineObj in powerLayerObj.powerLayerLineObjs_)
+                {
+                    powerLayerLineObj.polyLine_.Stroke = new SolidColorBrush(painter_.color_);
+                }
+            }
         }
 
         private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)

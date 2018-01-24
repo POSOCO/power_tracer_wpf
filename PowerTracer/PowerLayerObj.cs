@@ -13,20 +13,19 @@ namespace PowerTracer
     class PowerLayerObj : INotifyPropertyChanged
     {
         /*
-        The Power Layer object has a LayerName, PowerLayerLines array
-        The changes we notify for changes in mapboard are layerName, property changes of each line in the layerLinesArray
+        The Power Layer object has a LayerName, LayerVisibility PowerLayerLines array
+        The changes we notify for changes in mapboard are layerName, layerVisibility, property changes of each line in the layerLinesArray
             */
 
-        string layerName_ { get; set; } = "Unknown";
-        public ObservableCollection<PowerLayerLineObj> powerLayerLineObjs_ { get; set; }
-        public event PropertyChangedEventHandler PropertyChanged;
+        public string layerName_ { get; set; } = "Unknown";
+        bool isLayerVisible_ { get; set; } = true;
+        public ObservableCollection<PowerLayerLineObj> powerLayerLineObjs_ { get; set; } = new ObservableCollection<PowerLayerLineObj>();
 
-        // todo subscribe to changes in powerLayerLineObjs_
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public PowerLayerObj()
         {
-            powerLayerLineObjs_.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler
-(CollectionChangedMethod);
+            powerLayerLineObjs_.CollectionChanged += new NotifyCollectionChangedEventHandler (CollectionChangedMethod);
         }
 
         public string LayerName
@@ -37,6 +36,17 @@ namespace PowerTracer
                 layerName_ = value;
                 // notify this event for the painter
                 NotifyPropertyChanged(this, new PropertyChangedEventArgs("LayerName"));
+            }
+        }
+
+        public bool IsLayerVisible
+        {
+            get { return isLayerVisible_; }
+            set
+            {
+                isLayerVisible_ = value;
+                // notify this event for the painter
+                NotifyPropertyChanged(this, new PropertyChangedEventArgs("IsLayerVisible"));
             }
         }
 
@@ -76,7 +86,7 @@ namespace PowerTracer
                     // subscribe to the property changes in lineDataObject so that we can notify the painter
                     item.PropertyChanged += NotifyPropertyChanged;
                     // notify the painter that a new line is added to the layer for canvas painting
-                    NotifyPropertyChanged(item, new PropertyChangedEventArgs("LineAdded"));
+                    // NotifyPropertyChanged(item, new PropertyChangedEventArgs("LineAdded"));
                 }
             }
         }
@@ -90,7 +100,7 @@ namespace PowerTracer
                     // unsubscribe to the property changes in lineDataObject
                     item.PropertyChanged -= NotifyPropertyChanged;
                     // notify the painter that a new line is added to the layer for canvas painting
-                    NotifyPropertyChanged(item, new PropertyChangedEventArgs("LineRemoved"));
+                    // NotifyPropertyChanged(item, new PropertyChangedEventArgs("LineRemoved"));
                 }
             }
         }
