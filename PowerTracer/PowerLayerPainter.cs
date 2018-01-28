@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -22,8 +23,9 @@ namespace PowerTracer
         public DisplayStrategyEnum displayStrategy_ = DisplayStrategyEnum.AbsolutePower;
         public double pixelsPerMW_ = 0.02;
         public double pixelsPerNominalPower_ = 2;
-        public Point zoom_ = new Point(0.2, 0.2);
-        public Point pan_ = new Point(0, 0);
+        public Point zoom_ = new Point(0.16, 0.16);
+        public Point pan_ = new Point(161, -32);
+        Nullable<Point> dragStart_ = null;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -35,7 +37,21 @@ namespace PowerTracer
             }
         }
 
+        public PowerLayerPainter()
+        {
+
+        }
+
         public Canvas canvas_ { get; set; }
+
+        public void setCanvas(Canvas canvas)
+        {
+            canvas_ = canvas;
+            canvas_.MouseDown += Canvas_MouseDown;
+            canvas_.MouseMove += Canvas_MouseMove;
+            canvas_.MouseUp += Canvas_MouseUp;
+        }
+
         public Point Zoom
         {
             get { return zoom_; }
@@ -62,7 +78,7 @@ namespace PowerTracer
         {
             // determine color
             Color lineColor = color_;
-            
+
             if (lineObj.isHighLighted_)
             {
                 lineColor = highlightColor_;
@@ -91,13 +107,13 @@ namespace PowerTracer
         public PointCollection getPowerLineCanvasPoints(PowerLayerLineObj lineObj)
         {
             // determine line points
-            PointCollection linePnts = lineObj.lineDataObj_.LinePoints;
+            PointCollection linePnts = new PointCollection(lineObj.lineDataObj_.LinePoints);
 
             // transform them according to the zoom and pan values
             for (int i = 0; i < linePnts.Count; i++)
             {
-                double newX = (linePnts.ElementAt(i).X + pan_.X) * zoom_.X;
-                double newY = (linePnts.ElementAt(i).Y + pan_.Y) * zoom_.Y;
+                double newX = (linePnts.ElementAt(i).X) * zoom_.X + pan_.X;
+                double newY = (linePnts.ElementAt(i).Y) * zoom_.Y + pan_.Y;
                 linePnts[i] = new Point(newX, newY);
             }
 
@@ -144,7 +160,6 @@ namespace PowerTracer
                 case "IsLayerVisible":
                     var layerObj = sender as PowerLayerObj;
                     bool isVisible = layerObj.IsLayerVisible;
-                    LinesWindow.addLinesToConsole("Changing visibility of "+layerObj.layerName_);
                     foreach (PowerLayerLineObj powerLayerLineObj in layerObj.powerLayerLineObjs_)
                     {
                         if (isVisible)
@@ -165,6 +180,29 @@ namespace PowerTracer
                 case "LineRemoved":
                     // do something
                     break;
+            }
+        }
+
+        private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender != null)
+            {
+                dragStart_ = e.GetPosition((Canvas)sender);
+            }
+        }
+
+        private void Canvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            dragStart_ = null;
+        }
+
+        private void Canvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed && dragStart_ != null)
+            {
+                Point newPosition = e.GetPosition((Canvas)sender);
+                Pan = new Point(Pan.X + (newPosition.X - dragStart_.Value.X) * 1, Pan.Y + (newPosition.Y - dragStart_.Value.Y) * 1);
+                dragStart_ = newPosition;
             }
         }
 

@@ -20,7 +20,8 @@ namespace PowerTracer
             painter_ = new PowerLayerPainter();
             linesJSONFetcher_ = new LinesJSONFetcher();
 
-            painter_.canvas_ = canvas;
+            painter_.setCanvas(canvas);
+            painter_.PropertyChanged += HandlePropertyChanged;
 
             powerLayers_.CollectionChanged += new NotifyCollectionChangedEventHandler(CollectionChangedMethod);
 
@@ -37,7 +38,7 @@ namespace PowerTracer
         public void initiateUIObjects()
         {
             recalculatePolylines();
-            assignLinePowers();            
+            assignLinePowers();
         }
 
         public void paintLayers()
@@ -150,9 +151,21 @@ namespace PowerTracer
         // listener that subscribes for line object change event
         private void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            // todo if the property changes are not related to drawing, then handle them here instead of sending to painter
-            // call the event handler of the painter
-            painter_.HandlePropertyChanged(sender, e);
+            // if the property changes are not related to drawing, then handle them here instead of sending to painter
+            switch (e.PropertyName)
+            {
+                case "Pan":
+                    recalculatePolylines();
+                    break;
+                case "Zoom":
+                    recalculatePolylines();
+                    break;
+                default:
+                    // call the event handler of the painter
+                    painter_.HandlePropertyChanged(sender, e);
+                    break;
+            }
+
         }
     }
 }

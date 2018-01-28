@@ -31,6 +31,8 @@ namespace PowerTracer
             DataContext = this;
             powerMap_ = new PowerMap(paintSurface);
             layerSelectionItemList.ItemsSource = powerMap_.powerLayers_;
+            PanValue.DataContext = powerMap_.painter_;
+            ZoomValue.DataContext = powerMap_.painter_;
         }
 
         private void OpenCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -62,11 +64,6 @@ namespace PowerTracer
             mainWindow.Show();
         }
 
-        private void Zoom_Click(object sender, RoutedEventArgs e)
-        {
-            addLinesToConsole("You clicked 'Zoom...'");
-        }
-
         private void Pan_Click(object sender, RoutedEventArgs e)
         {
             addLinesToConsole("You clicked 'Pan...'");
@@ -84,12 +81,7 @@ namespace PowerTracer
             linesWindow.Show();
         }
 
-        private void TestBtn_Click(object sender, RoutedEventArgs e)
-        {
-            addLinesToConsole("You clicked 'Test Button...'");
-        }
-
-        public void addLinesToConsoleDelete(string str)
+        public void addLinesToConsole(string str)
         {
             // todo allow other threads to write here just like we did in the reporting tool
             string consoleTxt = WelcomeText.Text;
@@ -97,7 +89,7 @@ namespace PowerTracer
             WelcomeText.Text = DateTime.Now.ToString() + ": " + str + "\n" + consoleTxt;
         }
 
-        public static void addLinesToConsole(String str)
+        public static void addLinesToConsoleDelete(String str)
         {
             main.Dispatcher.Invoke(new Action(() =>
             {
@@ -105,6 +97,18 @@ namespace PowerTracer
                 // todo limit number of lines to 10
                 main.WelcomeText.Text = DateTime.Now.ToString() + ": " + str + "\n" + consoleTxt;
             }));
+        }
+
+        private void ZoomPlus_click(object sender, RoutedEventArgs e)
+        {
+            Point initialZoom = powerMap_.painter_.zoom_;
+            powerMap_.painter_.Zoom = new Point(initialZoom.X + 0.01, initialZoom.Y + 0.01);
+        }
+
+        private void ZoomMinus_Click(object sender, RoutedEventArgs e)
+        {
+            Point initialZoom = powerMap_.painter_.zoom_;
+            powerMap_.painter_.Zoom = new Point(initialZoom.X - 0.01, initialZoom.Y - 0.01);
         }
     }
 }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PowerTracer"
         mc:Ignorable="d"
-        Title="LinesWindow" Height="300" Width="300">
+        Title="LinesWindow" Height="800" Width="800">
     <Window.CommandBindings>
         <CommandBinding Command="Open" CanExecute="OpenCommand_CanExecute" Executed="OpenCommand_Executed" />
     </Window.CommandBindings>
@@ -24,12 +24,8 @@
                     <MenuItem Header="Draw" Click="Draw_Click"/>
                     <MenuItem Header="_About" Click="About_Click"/>
                 </MenuItem>
-                <MenuItem Header="Zoom">
-                    <MenuItem Header="ZoomXY" Tag="ZXY" Click="Zoom_Click" IsCheckable="True" IsChecked="True"/>
-                    <MenuItem Header="ZoomX" Tag="ZX" Click="Zoom_Click" IsCheckable="True"/>
-                    <MenuItem Header="ZoomY" Tag="ZY" Click="Zoom_Click" IsCheckable="True"/>
-                    <MenuItem Header="ZoomOff" Tag="ZOff" Click="Zoom_Click" IsCheckable="True"/>
-                </MenuItem>
+                <MenuItem Header="ZoomPlus" Click="ZoomPlus_click"></MenuItem>
+                <MenuItem Header="ZoomMinus" Click="ZoomMinus_Click"></MenuItem>
                 <MenuItem Header="Pan">
                     <MenuItem Header="PaXY" Tag="PXY" Click="Pan_Click" IsCheckable="True" IsChecked="True"/>
                     <MenuItem Header="PanX" Tag="PX" Click="Pan_Click" IsCheckable="True"/>
@@ -44,19 +40,17 @@
               VerticalScrollBarVisibility ="Auto" HorizontalScrollBarVisibility="Auto">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Button Name="TestBtn" Click="TestBtn_Click">Test</Button>
-
-                <Canvas Grid.Row="1" Name="paintSurface" Background="Black" ClipToBounds="True">
+                <Canvas Grid.Row="0" Name="paintSurface" Background="Black" ClipToBounds="True">
 
                 </Canvas>
 
-                <ScrollViewer VerticalScrollBarVisibility ="Auto" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Left" MaxWidth="500" Grid.Row="2">
-                    <ItemsControl Name="layerSelectionItemList">
+                <ScrollViewer VerticalScrollBarVisibility ="Auto" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Left" MaxWidth="1000" Grid.Row="1">
+                    <ItemsControl Name="layerSelectionItemList" MinHeight="30">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <WrapPanel/>
@@ -72,9 +66,16 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
-
-                <ScrollViewer CanContentScroll="False" Grid.Row="3" VerticalScrollBarVisibility ="Auto" HorizontalScrollBarVisibility="Auto" Height="75">
-                    <TextBox Name="WelcomeText" Text="Hello World!" AcceptsReturn="True"></TextBox>
+                
+                <StackPanel Orientation="Horizontal" Grid.Row="2">
+                    <Label Content="Pan"></Label>
+                    <Label Name="PanValue" Content="{Binding Pan}"></Label>
+                    <Label Content="Zoom"></Label>
+                    <Label Name="ZoomValue" Content="{Binding Zoom}"></Label>
+                </StackPanel>
+                
+                <ScrollViewer CanContentScroll="False" Grid.Row="3" VerticalScrollBarVisibility ="Auto" HorizontalScrollBarVisibility="Auto" Height="50">
+                    <TextBox Name="WelcomeText" Text="Hello User!" AcceptsReturn="True"></TextBox>
                 </ScrollViewer>
             </Grid>
         </ScrollViewer>
