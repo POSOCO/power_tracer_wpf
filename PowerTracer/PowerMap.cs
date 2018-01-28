@@ -11,7 +11,7 @@ namespace PowerTracer
 {
     class PowerMap
     {
-        ObservableCollection<PowerLayerObj> powerLayers_ { get; set; } = new ObservableCollection<PowerLayerObj>();
+        public ObservableCollection<PowerLayerObj> powerLayers_ { get; set; } = new ObservableCollection<PowerLayerObj>();
         public PowerLayerPainter painter_ { get; set; }
         LinesJSONFetcher linesJSONFetcher_;
 
@@ -29,13 +29,15 @@ namespace PowerTracer
             foreach (PowerLayerObj layerObj in layerObjs)
             {
                 powerLayers_.Add(layerObj);
-            }            
-
-            // temporary
-            recalculatePolylines();
-            assignLinePowers();
-            assignLineColors();
+            }
+            initiateUIObjects();
             paintLayers();
+        }
+
+        public void initiateUIObjects()
+        {
+            recalculatePolylines();
+            assignLinePowers();            
         }
 
         public void paintLayers()
@@ -65,11 +67,13 @@ namespace PowerTracer
             {
                 foreach (PowerLayerLineObj powerLayerLineObj in powerLayerObj.powerLayerLineObjs_)
                 {
-                    powerLayerLineObj.polyLine_.Points = painter_.getPowerLineCanvasPoints(powerLayerLineObj);
+                    // powerLayerLineObj.polyLine_.Points = painter_.getPowerLineCanvasPoints(powerLayerLineObj);
+                    powerLayerLineObj.lineDataObj_.LinePoints = powerLayerLineObj.lineDataObj_.linePoints_;
                 }
             }
         }
 
+        // todo remove this function since not required
         public void assignLinePowers()
         {
             foreach (PowerLayerObj powerLayerObj in powerLayers_)

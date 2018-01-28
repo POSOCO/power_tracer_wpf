@@ -62,11 +62,14 @@ namespace PowerTracer
         {
             // determine color
             Color lineColor = color_;
+            
             if (lineObj.isHighLighted_)
             {
                 lineColor = highlightColor_;
+                return lineColor;
             }
 
+            // todo use line alert flows to decide line color instead of returning only one color
             return lineColor;
         }
 
@@ -123,9 +126,10 @@ namespace PowerTracer
                     // get the lineDataObject and update the Polyline thickness
                     var lineObj = sender as PowerLayerLineObj;
                     lineObj.polyLine_.StrokeThickness = getPowerLineThickness(lineObj);
+                    lineObj.polyLine_.Stroke = new SolidColorBrush(getPowerLineColor(lineObj));
                     break;
                 case "IsHighLighted":
-                    // get the lineDataObject and update the Polyline thickness
+                    // get the lineDataObject and update the Polyline color
                     lineObj = sender as PowerLayerLineObj;
                     lineObj.polyLine_.Stroke = new SolidColorBrush(getPowerLineColor(lineObj));
                     break;
@@ -140,6 +144,7 @@ namespace PowerTracer
                 case "IsLayerVisible":
                     var layerObj = sender as PowerLayerObj;
                     bool isVisible = layerObj.IsLayerVisible;
+                    LinesWindow.addLinesToConsole("Changing visibility of "+layerObj.layerName_);
                     foreach (PowerLayerLineObj powerLayerLineObj in layerObj.powerLayerLineObjs_)
                     {
                         if (isVisible)

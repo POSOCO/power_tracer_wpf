@@ -55,7 +55,7 @@
 
                 </Canvas>
 
-                <ScrollViewer VerticalScrollBarVisibility ="Auto" HorizontalScrollBarVisibility="Auto" Height="40" HorizontalAlignment="Left" MaxWidth="500" Grid.Row="2">
+                <ScrollViewer VerticalScrollBarVisibility ="Auto" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Left" MaxWidth="500" Grid.Row="2">
                     <ItemsControl Name="layerSelectionItemList">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -65,8 +65,8 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <WrapPanel>
-                                    <CheckBox IsChecked="{Binding isVisible_}" />
-                                    <Label Content="{Binding name_}" />
+                                    <CheckBox IsChecked="{Binding IsLayerVisible, Mode=TwoWay}" />
+                                    <Label Content="{Binding LayerName}" />
                                 </WrapPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

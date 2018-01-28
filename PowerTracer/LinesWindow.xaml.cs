@@ -22,22 +22,15 @@ namespace PowerTracer
     /// </summary>
     public partial class LinesWindow : Window
     {
-        PowerLine testline_;
-        ObservableCollection<PowerLineLayer> layers_;
-        LinesJSONFetcher jsonParser_ = new LinesJSONFetcher();
         PowerMap powerMap_;
-
+        internal static LinesWindow main;
         public LinesWindow()
         {
             InitializeComponent();
+            main = this;
             DataContext = this;
-
-            //layers_ = new ObservableCollection<PowerLineLayer>(jsonParser_.fetchLayers(File.ReadAllText("lines_ddl.json")));
-            //layerSelectionItemList.ItemsSource = layers_;
-
-            // testLineDraw();
-            //paintLayers();
             powerMap_ = new PowerMap(paintSurface);
+            layerSelectionItemList.ItemsSource = powerMap_.powerLayers_;
         }
 
         private void OpenCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -96,178 +89,22 @@ namespace PowerTracer
             addLinesToConsole("You clicked 'Test Button...'");
         }
 
-        private static void ShowHideHighlight(object sender, MouseEventArgs e, EnterOrLeave enterOrLeave, PowerLine powerLine)
+        public void addLinesToConsoleDelete(string str)
         {
-            // http://www.c-sharpcorner.com/blogs/passing-parameters-to-events-c-sharp1
-            if (powerLine != null)
-            {
-                if (enterOrLeave == EnterOrLeave.Enter)
-                {
-                    powerLine.IsHighLighted = true;
-                }
-                else
-                {
-                    powerLine.IsHighLighted = false;
-                }
-            }
-        }
-
-        private enum EnterOrLeave
-        {
-            Enter,
-            Leave
-        }
-
-        public class ColorBrushConverter : IValueConverter
-        {
-            // https://stackoverflow.com/questions/3309709/how-do-i-convert-a-color-to-a-brush-in-xaml
-            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                if (value == null)
-                    return null;
-
-                if (value is Color)
-                    return new SolidColorBrush((Color)value);
-
-                throw new InvalidOperationException("Unsupported type [" + value.GetType().Name + "], ColorToSolidColorBrushValueConverter.Convert()");
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                // useful incase of two way binding. Right it doesnot work
-                if (value == null)
-                    return null;
-
-                if (value is SolidColorBrush)
-                    return ((SolidColorBrush)value).Color;
-
-                throw new InvalidOperationException("Unsupported type [" + value.GetType().Name + "], ColorToSolidColorBrushValueConverter.ConvertBack()");
-            }
-        }
-
-        public void testLineDraw()
-        {
-            // Initializing a power line
-            testline_ = new PowerLine();
-
-            // Using the PowerLine Object for creating a Polyline that is bound to the object
-            Polyline lineObj_ = new Polyline();
-
-            //setting the lineObj_ MouseEnter and MouseLeave events for hover highlight effect
-            lineObj_.MouseEnter += delegate (object sender, MouseEventArgs e) { ShowHideHighlight(sender, e, EnterOrLeave.Enter, testline_); };
-            lineObj_.MouseLeave += delegate (object sender, MouseEventArgs e) { ShowHideHighlight(sender, e, EnterOrLeave.Leave, testline_); };
-
-            // bind line points
-            Binding pointsBinding = new Binding("LinePoints");
-            pointsBinding.Source = testline_;
-            lineObj_.SetBinding(Polyline.PointsProperty, pointsBinding);
-
-            // bind line thickness
-            Binding thicknessBinding = new Binding("Thickness");
-            thicknessBinding.Source = testline_;
-            lineObj_.SetBinding(Polyline.StrokeThicknessProperty, thicknessBinding);
-
-            // bind line color
-            Binding colorBinding = new Binding("Color");
-            colorBinding.Source = testline_;
-            colorBinding.Converter = new ColorBrushConverter();
-            lineObj_.SetBinding(Polyline.StrokeProperty, colorBinding);
-
-            paintSurface.Children.Add(lineObj_);
-
-            //Changing PowerLine object parameters for testing the binding
-            testline_.Power = 500;
-            PointCollection pointCollection = new PointCollection();
-            pointCollection.Add(new Point(0, 0));
-            pointCollection.Add(new Point(200, 200));
-            testline_.LinePoints = pointCollection;
-            testline_.LinePoints.Add(new Point(200, 250));
-
-            // paintSurface.Children.Remove(lineObj_);
-        }
-
-        public void paintLayers()
-        {
-            foreach (PowerLineLayer layer in layers_)
-            {
-                if (layer.isVisible_ != true)
-                {
-                    continue;
-                }
-                foreach (PowerLine line in layer.layerLines_)
-                {
-                    // Using the PowerLine Object for creating a Polyline that is bound to the object
-                    Polyline lineObj_ = new Polyline();
-                    //setting the lineObj_ MouseEnter and MouseLeave events for hover highlight effect
-                    lineObj_.MouseEnter += delegate (object sender, MouseEventArgs e) { ShowHideHighlight(sender, e, EnterOrLeave.Enter, line); };
-                    lineObj_.MouseLeave += delegate (object sender, MouseEventArgs e) { ShowHideHighlight(sender, e, EnterOrLeave.Leave, line); };
-
-                    // bind line points
-                    // todo set points explicitly for eacch repaint and remove lines from canvas children if out of bounds
-                    Binding pointsBinding = new Binding("LinePoints");
-                    pointsBinding.Source = line;
-                    lineObj_.SetBinding(Polyline.PointsProperty, pointsBinding);
-
-                    // bind line thickness
-                    Binding thicknessBinding = new Binding("Thickness");
-                    thicknessBinding.Source = line;
-                    lineObj_.SetBinding(Polyline.StrokeThicknessProperty, thicknessBinding);
-
-                    // bind line color
-                    Binding colorBinding = new Binding("Color");
-                    colorBinding.Source = line;
-                    colorBinding.Converter = new ColorBrushConverter();
-                    lineObj_.SetBinding(Polyline.StrokeProperty, colorBinding);
-
-                    // draw line on the canvas
-                    paintSurface.Children.Add(lineObj_);
-
-                    // initialize line power for testing
-                    line.Power = 100;
-                }
-
-            }
-        }
-
-        public void drawLines()
-        {
-            object payLoad = new { dataRate = 25 };
-            // addLinesToConsole("Started fetching data");
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.WorkerReportsProgress = true;
-            worker.DoWork += worker_DoWork;
-            worker.ProgressChanged += worker_ProgressChanged;
-            worker.RunWorkerCompleted += worker_RunWorkerCompleted;
-            worker.RunWorkerAsync(payLoad);
-        }
-
-        void worker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            object argument = e.Argument;
-            int dataRate = (int)argument.GetType().GetProperty("dataRate").GetValue(argument, null);
-            e.Result = new { dataRate = 25 };
-        }
-
-        // worker thread ui update stuff
-        void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-
-        }
-
-        // worker thread completed stuff
-        void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            addLinesToConsole("Finished task");
-            object res = e.Result;
-            int dataRate = (int)res.GetType().GetProperty("dataRate").GetValue(res, null);
-        }
-
-
-        public void addLinesToConsole(string str)
-        {
+            // todo allow other threads to write here just like we did in the reporting tool
             string consoleTxt = WelcomeText.Text;
             // todo limit number of lines to 10
             WelcomeText.Text = DateTime.Now.ToString() + ": " + str + "\n" + consoleTxt;
+        }
+
+        public static void addLinesToConsole(String str)
+        {
+            main.Dispatcher.Invoke(new Action(() =>
+            {
+                string consoleTxt = main.WelcomeText.Text;
+                // todo limit number of lines to 10
+                main.WelcomeText.Text = DateTime.Now.ToString() + ": " + str + "\n" + consoleTxt;
+            }));
         }
     }
 }
