@@ -64,14 +64,11 @@ namespace PowerTracer
             mainWindow.Show();
         }
 
-        private void Pan_Click(object sender, RoutedEventArgs e)
-        {
-            addLinesToConsole("You clicked 'Pan...'");
-        }
-
         private void Reset_Click(object sender, RoutedEventArgs e)
         {
             addLinesToConsole("You clicked 'Reset...'");
+            powerMap_.painter_.pan_ = new Point(PowerLayerPainter.defPan_.X, PowerLayerPainter.defPan_.Y);
+            powerMap_.painter_.Zoom = new Point(PowerLayerPainter.defZoom_.X, PowerLayerPainter.defZoom_.Y);
         }
 
         private void NewWindow_Click(object sender, RoutedEventArgs e)

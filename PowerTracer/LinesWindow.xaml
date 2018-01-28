@@ -24,13 +24,19 @@
                     <MenuItem Header="Draw" Click="Draw_Click"/>
                     <MenuItem Header="_About" Click="About_Click"/>
                 </MenuItem>
-                <MenuItem Header="ZoomPlus" Click="ZoomPlus_click"></MenuItem>
-                <MenuItem Header="ZoomMinus" Click="ZoomMinus_Click"></MenuItem>
-                <MenuItem Header="Pan">
-                    <MenuItem Header="PaXY" Tag="PXY" Click="Pan_Click" IsCheckable="True" IsChecked="True"/>
-                    <MenuItem Header="PanX" Tag="PX" Click="Pan_Click" IsCheckable="True"/>
-                    <MenuItem Header="PanY" Tag="PY" Click="Pan_Click" IsCheckable="True"/>
-                    <MenuItem Header="PanOff" Tag="POff" Click="Pan_Click" IsCheckable="True"/>
+                <MenuItem Click="ZoomPlus_click">
+                    <MenuItem.Header>
+                        <StackPanel>
+                            <Image Width="24" Height="24" Source=".\icons\magnify-plus-outline.png" ToolTip="Zoom+"/>
+                        </StackPanel>
+                    </MenuItem.Header>
+                </MenuItem>
+                <MenuItem Click="ZoomMinus_Click">
+                    <MenuItem.Header>
+                        <StackPanel>
+                            <Image Width="24" Height="24" Source=".\icons\magnify-minus-outline.png" ToolTip="Zoom-"/>
+                        </StackPanel>
+                    </MenuItem.Header>
                 </MenuItem>
                 <MenuItem Header="Reset" Click="Reset_Click"></MenuItem>
                 <MenuItem Header="New Window" Click="NewWindow_Click"></MenuItem>

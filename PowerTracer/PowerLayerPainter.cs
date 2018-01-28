@@ -23,8 +23,10 @@ namespace PowerTracer
         public DisplayStrategyEnum displayStrategy_ = DisplayStrategyEnum.AbsolutePower;
         public double pixelsPerMW_ = 0.02;
         public double pixelsPerNominalPower_ = 2;
-        public Point zoom_ = new Point(0.16, 0.16);
-        public Point pan_ = new Point(161, -32);
+        public static Point defZoom_ = new Point(0.16, 0.16);
+        public static Point defPan_ = new Point(161, -32);
+        public Point zoom_ = new Point(defZoom_.X, defZoom_.Y);
+        public Point pan_ = new Point(defPan_.X, defPan_.Y);
         Nullable<Point> dragStart_ = null;
 
         public event PropertyChangedEventHandler PropertyChanged;
