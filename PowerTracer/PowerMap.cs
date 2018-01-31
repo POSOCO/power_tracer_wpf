@@ -9,11 +9,28 @@ using System.Windows.Media;
 
 namespace PowerTracer
 {
-    class PowerMap
+    class PowerMap : INotifyPropertyChanged
     {
         public ObservableCollection<PowerLayerObj> powerLayers_ { get; set; } = new ObservableCollection<PowerLayerObj>();
         public PowerLayerPainter painter_ { get; set; }
         LinesJSONFetcher linesJSONFetcher_;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged(string info)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(info));
+            }
+        }
+
+        private void NotifyPropertyChanged(object sender, string info)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(sender, new PropertyChangedEventArgs(info));
+            }
+        }
 
         public PowerMap(Canvas canvas)
         {
@@ -159,6 +176,10 @@ namespace PowerTracer
                     break;
                 case "Zoom":
                     recalculatePolylines();
+                    break;
+                case "IsHighLighted":
+                    painter_.HandlePropertyChanged(sender, e);
+                    NotifyPropertyChanged(sender, "IsHighLighted");
                     break;
                 default:
                     // call the event handler of the painter

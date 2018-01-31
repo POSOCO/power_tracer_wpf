@@ -30,6 +30,7 @@ namespace PowerTracer
             main = this;
             DataContext = this;
             powerMap_ = new PowerMap(paintSurface);
+            powerMap_.PropertyChanged += HandlePropertyChanged;
             layerSelectionItemList.ItemsSource = powerMap_.powerLayers_;
             PanValue.DataContext = powerMap_.painter_;
             ZoomValue.DataContext = powerMap_.painter_;
@@ -106,6 +107,21 @@ namespace PowerTracer
         {
             Point initialZoom = powerMap_.painter_.zoom_;
             powerMap_.painter_.Zoom = new Point(initialZoom.X - 0.01, initialZoom.Y - 0.01);
+        }
+
+        private void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "IsHighLighted":
+                    // get the lineDataObject and update the line stats
+                    PowerLayerLineObj lineObj = sender as PowerLayerLineObj;
+                    UIObjStats.Content = String.Format("id : {0}, power : {1}, voltage : {2}", lineObj.lineDataObj_.address_, lineObj.lineDataObj_.power_, lineObj.lineDataObj_.voltage_);
+                    break;
+                default:
+                    // do something
+                    break;
+            }
         }
     }
 }
