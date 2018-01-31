@@ -27,14 +27,14 @@
                 <MenuItem Click="ZoomPlus_click">
                     <MenuItem.Header>
                         <StackPanel>
-                            <Image Width="24" Height="24" Source=".\icons\magnify-plus-outline.png" ToolTip="Zoom+"/>
+                            <Image Width="16" Height="16" Source=".\icons\magnify-plus-outline.png" ToolTip="Zoom+"/>
                         </StackPanel>
                     </MenuItem.Header>
                 </MenuItem>
                 <MenuItem Click="ZoomMinus_Click">
                     <MenuItem.Header>
                         <StackPanel>
-                            <Image Width="24" Height="24" Source=".\icons\magnify-minus-outline.png" ToolTip="Zoom-"/>
+                            <Image Width="16" Height="16" Source=".\icons\magnify-minus-outline.png" ToolTip="Zoom-"/>
                         </StackPanel>
                     </MenuItem.Header>
                 </MenuItem>
@@ -42,12 +42,23 @@
                 <MenuItem Header="New Window" Click="NewWindow_Click"></MenuItem>
             </Menu>
         </StackPanel>
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Background="#007acc">
+            <StackPanel.Resources>
+                <Style TargetType="Label">
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="FontSize" Value="10" />
+                </Style>
+            </StackPanel.Resources>
+            <Label Content="Pan"></Label>
+            <Label Name="PanValue" Content="{Binding Pan}"></Label>
+            <Label Content="Zoom"></Label>
+            <Label Name="ZoomValue" Content="{Binding Zoom}"></Label>
+        </StackPanel>
         <ScrollViewer Margin="5" CanContentScroll="False"
               VerticalScrollBarVisibility ="Auto" HorizontalScrollBarVisibility="Auto">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
@@ -65,6 +76,11 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <WrapPanel>
+                                    <WrapPanel.Resources>
+                                        <Style TargetType="Label">
+                                            <Setter Property="FontSize" Value="11" />
+                                        </Style>
+                                    </WrapPanel.Resources>
                                     <CheckBox IsChecked="{Binding IsLayerVisible, Mode=TwoWay}" />
                                     <Label Content="{Binding LayerName}" />
                                 </WrapPanel>
@@ -72,15 +88,8 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
-                
-                <StackPanel Orientation="Horizontal" Grid.Row="2">
-                    <Label Content="Pan"></Label>
-                    <Label Name="PanValue" Content="{Binding Pan}"></Label>
-                    <Label Content="Zoom"></Label>
-                    <Label Name="ZoomValue" Content="{Binding Zoom}"></Label>
-                </StackPanel>
-                
-                <ScrollViewer CanContentScroll="False" Grid.Row="3" VerticalScrollBarVisibility ="Auto" HorizontalScrollBarVisibility="Auto" Height="50">
+
+                <ScrollViewer CanContentScroll="False" Grid.Row="2" VerticalScrollBarVisibility ="Auto" HorizontalScrollBarVisibility="Auto" Height="50">
                     <TextBox Name="WelcomeText" Text="Hello User!" AcceptsReturn="True"></TextBox>
                 </ScrollViewer>
             </Grid>
