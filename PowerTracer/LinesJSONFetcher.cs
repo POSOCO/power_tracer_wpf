@@ -85,32 +85,69 @@ namespace PowerTracer
                     //stub
                     foreach (dynamic layerLine in jsonLayer.polyLines)
                     {
-                        PowerLayerLineObj line = new PowerLayerLineObj();
-                        line.lineDataObj_.address_ = layerLine.ednaId;
-                        // Console.WriteLine("\t\t" + layerLine.ednaId as string);
-                        foreach (dynamic linePoint in layerLine.points)
+                        // Create a power line if voltage is either 400 or 765 kV else make it a border line
+                        string voltageStr = (string)layerLine.cam;
+                        if (voltageStr == "PGCIL_LINE_400KV" || voltageStr == "PGCIL_LINE_800KV")
                         {
-                            // Console.WriteLine("\t\t\t (" + Convert.ToDouble(linePoint.x) + ", " + Convert.ToDouble(linePoint.y) + ")");
-                            line.lineDataObj_.linePoints_.Add(new Point(Convert.ToDouble(linePoint.x), Convert.ToDouble(linePoint.y)));
-                        }
-
-                        // do the points modification for drawing
-                        if (line.lineDataObj_.linePoints_.Count > 2)
-                        {
-                            line.lineDataObj_.linePoints_.RemoveAt(0);
-                            Point origin = line.lineDataObj_.linePoints_.ElementAt(0);
-                            for (int i = 1; i < line.lineDataObj_.linePoints_.Count; i++)
+                            PowerLayerLineObj line = new PowerLayerLineObj();
+                            line.lineDataObj_.address_ = layerLine.ednaId;
+                            line.lineDataObj_.voltage_ = 400;
+                            if (voltageStr == "PGCIL_LINE_800KV")
                             {
-                                double newX = line.lineDataObj_.linePoints_.ElementAt(i).X + origin.X;
-                                double newY = line.lineDataObj_.linePoints_.ElementAt(i).Y + origin.Y;
-                                line.lineDataObj_.linePoints_[i] = new Point(newX, newY);
-                                origin = line.lineDataObj_.linePoints_.ElementAt(i);
+                                line.lineDataObj_.voltage_ = 765;
+                            }
+                            // Console.WriteLine("\t\t" + layerLine.ednaId as string);
+                            foreach (dynamic linePoint in layerLine.points)
+                            {
+                                // Console.WriteLine("\t\t\t (" + Convert.ToDouble(linePoint.x) + ", " + Convert.ToDouble(linePoint.y) + ")");
+                                line.lineDataObj_.linePoints_.Add(new Point(Convert.ToDouble(linePoint.x), Convert.ToDouble(linePoint.y)));
                             }
 
-                            layer.powerLayerLineObjs_.Add(line);
+                            // do the points modification for drawing
+                            if (line.lineDataObj_.linePoints_.Count > 2)
+                            {
+                                line.lineDataObj_.linePoints_.RemoveAt(0);
+                                Point origin = line.lineDataObj_.linePoints_.ElementAt(0);
+                                for (int i = 1; i < line.lineDataObj_.linePoints_.Count; i++)
+                                {
+                                    double newX = line.lineDataObj_.linePoints_.ElementAt(i).X + origin.X;
+                                    double newY = line.lineDataObj_.linePoints_.ElementAt(i).Y + origin.Y;
+                                    line.lineDataObj_.linePoints_[i] = new Point(newX, newY);
+                                    origin = line.lineDataObj_.linePoints_.ElementAt(i);
+                                }
+
+                                layer.powerLayerLineObjs_.Add(line);
+                            }
+                        }
+                        else
+                        {
+                            // Create a border line
+                            PowerLayerBorderObj border = new PowerLayerBorderObj();
+                            // Console.WriteLine("\t\t" + layerLine.ednaId as string);
+                            foreach (dynamic linePoint in layerLine.points)
+                            {
+                                // Console.WriteLine("\t\t\t (" + Convert.ToDouble(linePoint.x) + ", " + Convert.ToDouble(linePoint.y) + ")");
+                                border.borderDataObj_.linePoints_.Add(new Point(Convert.ToDouble(linePoint.x), Convert.ToDouble(linePoint.y)));
+                            }
+
+                            // do the points modification for drawing
+                            if (border.borderDataObj_.linePoints_.Count > 2)
+                            {
+                                border.borderDataObj_.linePoints_.RemoveAt(0);
+                                Point origin = border.borderDataObj_.linePoints_.ElementAt(0);
+                                for (int i = 1; i < border.borderDataObj_.linePoints_.Count; i++)
+                                {
+                                    double newX = border.borderDataObj_.linePoints_.ElementAt(i).X + origin.X;
+                                    double newY = border.borderDataObj_.linePoints_.ElementAt(i).Y + origin.Y;
+                                    border.borderDataObj_.linePoints_[i] = new Point(newX, newY);
+                                    origin = border.borderDataObj_.linePoints_.ElementAt(i);
+                                }
+
+                                layer.powerLayerBorderObjs_.Add(border);
+                            }
                         }
                     }
-                    if (layer.powerLayerLineObjs_.Count > 0)
+                    if (layer.powerLayerLineObjs_.Count > 0 || layer.powerLayerBorderObjs_.Count > 0)
                     {
                         layers.Add(layer);
                     }

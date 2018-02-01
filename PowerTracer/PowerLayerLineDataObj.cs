@@ -49,7 +49,7 @@ namespace PowerTracer
                 NotifyPropertyChanged("LinePoints");
             }
         }
-        
+
         public double Power
         {
             get { return power_; }

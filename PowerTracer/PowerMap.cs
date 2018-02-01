@@ -76,6 +76,19 @@ namespace PowerTracer
                         painter_.removeElementFromCanvas(powerLayerLineObj.polyLine_);
                     }
                 }
+                foreach (PowerLayerBorderObj powerLayerBorderObj in powerLayerObj.powerLayerBorderObjs_)
+                {
+                    if (isVisible)
+                    {
+                        // add all the layer lines to the canvas if isVisible is true
+                        painter_.addElementToCanvas(powerLayerBorderObj.polyLine_);
+                    }
+                    else
+                    {
+                        // remove all the layer lines from the canvas if isVisible is false
+                        painter_.removeElementFromCanvas(powerLayerBorderObj.polyLine_);
+                    }
+                }
             }
         }
 
@@ -87,6 +100,11 @@ namespace PowerTracer
                 {
                     // powerLayerLineObj.polyLine_.Points = painter_.getPowerLineCanvasPoints(powerLayerLineObj);
                     powerLayerLineObj.lineDataObj_.LinePoints = powerLayerLineObj.lineDataObj_.linePoints_;
+                }
+                foreach (PowerLayerBorderObj powerLayerBorderObj in powerLayerObj.powerLayerBorderObjs_)
+                {
+                    // powerLayerLineObj.polyLine_.Points = painter_.getPowerLineCanvasPoints(powerLayerLineObj);
+                    powerLayerBorderObj.borderDataObj_.LinePoints = powerLayerBorderObj.borderDataObj_.linePoints_;
                 }
             }
         }
@@ -100,6 +118,10 @@ namespace PowerTracer
                 {
                     powerLayerLineObj.lineDataObj_.Power = 100.0;
                 }
+                foreach (PowerLayerBorderObj powerLayerBorderObj in powerLayerObj.powerLayerBorderObjs_)
+                {
+                    powerLayerBorderObj.polyLine_.Stroke = new SolidColorBrush(PowerLayerPainter.defBorderColor_);
+                }
             }
         }
 
@@ -109,7 +131,7 @@ namespace PowerTracer
             {
                 foreach (PowerLayerLineObj powerLayerLineObj in powerLayerObj.powerLayerLineObjs_)
                 {
-                    powerLayerLineObj.polyLine_.Stroke = new SolidColorBrush(painter_.color_);
+                    powerLayerLineObj.polyLine_.Stroke = new SolidColorBrush(PowerLayerPainter.color_400_kv_);
                 }
             }
         }

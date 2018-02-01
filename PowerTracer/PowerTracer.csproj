@@ -96,6 +96,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="PowerLayerBorderObj.cs" />
+    <Compile Include="PowerLayerBorderDataObj.cs" />
     <Compile Include="PowerLayerLineObj.cs" />
     <Compile Include="PowerLayerObj.cs" />
     <Compile Include="PowerLayerLineDataObj.cs" />

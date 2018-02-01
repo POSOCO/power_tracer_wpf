@@ -20,12 +20,14 @@ namespace PowerTracer
         public string layerName_ { get; set; } = "Unknown";
         bool isLayerVisible_ { get; set; } = true;
         public ObservableCollection<PowerLayerLineObj> powerLayerLineObjs_ { get; set; } = new ObservableCollection<PowerLayerLineObj>();
+        public ObservableCollection<PowerLayerBorderObj> powerLayerBorderObjs_ { get; set; } = new ObservableCollection<PowerLayerBorderObj>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public PowerLayerObj()
         {
-            powerLayerLineObjs_.CollectionChanged += new NotifyCollectionChangedEventHandler (CollectionChangedMethod);
+            powerLayerLineObjs_.CollectionChanged += new NotifyCollectionChangedEventHandler(CollectionChangedMethod);
+            powerLayerBorderObjs_.CollectionChanged += new NotifyCollectionChangedEventHandler(CollectionChangedMethod);
         }
 
         public string LayerName
@@ -79,28 +81,42 @@ namespace PowerTracer
 
         private void RegisterLinePropertyChanged(IList items)
         {
-            foreach (PowerLayerLineObj item in items)
+            foreach (object item in items)
             {
-                if (item != null)
+                if (item.GetType().FullName == typeof(PowerLayerLineObj).FullName)
                 {
                     // subscribe to the property changes in lineDataObject so that we can notify the painter
-                    item.PropertyChanged += NotifyPropertyChanged;
+                    ((PowerLayerLineObj)item).PropertyChanged += NotifyPropertyChanged;
                     // notify the painter that a new line is added to the layer for canvas painting
                     // NotifyPropertyChanged(item, new PropertyChangedEventArgs("LineAdded"));
+                }
+                else if (item.GetType().FullName == typeof(PowerLayerBorderObj).FullName)
+                {
+                    // subscribe to the property changes in lineDataObject so that we can notify the painter
+                    ((PowerLayerBorderObj)item).PropertyChanged += NotifyPropertyChanged;
+                    // notify the painter that a new line is added to the layer for canvas painting
+                    // NotifyPropertyChanged(item, new PropertyChangedEventArgs("BorderAdded"));
                 }
             }
         }
 
         private void UnRegisterlinePropertyChanged(IList items)
         {
-            foreach (INotifyPropertyChanged item in items)
+            foreach (object item in items)
             {
-                if (item != null)
+                if (item.GetType().FullName == typeof(PowerLayerLineObj).FullName)
                 {
-                    // unsubscribe to the property changes in lineDataObject
-                    item.PropertyChanged -= NotifyPropertyChanged;
+                    // subscribe to the property changes in lineDataObject so that we can notify the painter
+                    ((PowerLayerLineObj)item).PropertyChanged -= NotifyPropertyChanged;
                     // notify the painter that a new line is added to the layer for canvas painting
                     // NotifyPropertyChanged(item, new PropertyChangedEventArgs("LineRemoved"));
+                }
+                else if (item.GetType().FullName == typeof(PowerLayerBorderObj).FullName)
+                {
+                    // subscribe to the property changes in lineDataObject so that we can notify the painter
+                    ((PowerLayerBorderObj)item).PropertyChanged -= NotifyPropertyChanged;
+                    // notify the painter that a new line is added to the layer for canvas painting
+                    // NotifyPropertyChanged(item, new PropertyChangedEventArgs("BorderRemoved"));
                 }
             }
         }

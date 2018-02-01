@@ -116,7 +116,10 @@ namespace PowerTracer
                 case "IsHighLighted":
                     // get the lineDataObject and update the line stats
                     PowerLayerLineObj lineObj = sender as PowerLayerLineObj;
-                    UIObjStats.Content = String.Format("id : {0}, power : {1}, voltage : {2}", lineObj.lineDataObj_.address_, lineObj.lineDataObj_.power_, lineObj.lineDataObj_.voltage_);
+                    if (lineObj != null)
+                    {
+                        UIObjStats.Content = String.Format("id : {0}, power : {1}, voltage : {2}", lineObj.lineDataObj_.address_, lineObj.lineDataObj_.power_, lineObj.lineDataObj_.voltage_);
+                    }
                     break;
                 default:
                     // do something

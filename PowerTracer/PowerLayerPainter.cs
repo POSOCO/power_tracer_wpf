@@ -18,7 +18,9 @@ namespace PowerTracer
         The Power Layer Painter has a painting parameters, canvasZoom, canvasPan and listeners to changes in dataObjects so as to update the UI objects
             */
         // set the painter parameters
-        public Color color_ = Color.FromRgb(255, 0, 0); // default red color
+        public static Color color_400_kv_ = Color.FromRgb(255, 0, 0); // 400 KV color
+        public static Color color_765_kv_ = Color.FromRgb(255, 255, 0); // 765 KV color
+        public static Color defBorderColor_ = Color.FromRgb(255, 228, 181);
         public Color highlightColor_ { get; set; } = Color.FromRgb(255, 255, 255); // default white highlight color
         public DisplayStrategyEnum displayStrategy_ = DisplayStrategyEnum.AbsolutePower;
         public double pixelsPerMW_ = 0.02;
@@ -79,7 +81,7 @@ namespace PowerTracer
         public Color getPowerLineColor(PowerLayerLineObj lineObj)
         {
             // determine color
-            Color lineColor = color_;
+            Color lineColor = color_400_kv_;
 
             if (lineObj.isHighLighted_)
             {
@@ -87,7 +89,27 @@ namespace PowerTracer
                 return lineColor;
             }
 
+            if (lineObj.lineDataObj_.voltage_ == 765)
+            {
+                lineColor = color_765_kv_;
+                return lineColor;
+            }
+
             // todo use line alert flows to decide line color instead of returning only one color
+            return lineColor;
+        }
+
+        public Color getBorderColor(PowerLayerBorderObj borderLineObj)
+        {
+            // determine color
+            Color lineColor = defBorderColor_;
+
+            if (borderLineObj.isHighLighted_)
+            {
+                lineColor = highlightColor_;
+                return lineColor;
+            }
+
             return lineColor;
         }
 
@@ -106,10 +128,10 @@ namespace PowerTracer
             return lineThickness;
         }
 
-        public PointCollection getPowerLineCanvasPoints(PowerLayerLineObj lineObj)
+        public PointCollection getPowerLineCanvasPoints(PointCollection lineObjPnts)
         {
             // determine line points
-            PointCollection linePnts = new PointCollection(lineObj.lineDataObj_.LinePoints);
+            PointCollection linePnts = new PointCollection(lineObjPnts);
 
             // transform them according to the zoom and pan values
             for (int i = 0; i < linePnts.Count; i++)
@@ -143,36 +165,75 @@ namespace PowerTracer
                 case "Power":
                     // get the lineDataObject and update the Polyline thickness
                     var lineObj = sender as PowerLayerLineObj;
-                    lineObj.polyLine_.StrokeThickness = getPowerLineThickness(lineObj);
-                    lineObj.polyLine_.Stroke = new SolidColorBrush(getPowerLineColor(lineObj));
+                    if (lineObj != null)
+                    {
+                        lineObj.polyLine_.StrokeThickness = getPowerLineThickness(lineObj);
+                        lineObj.polyLine_.Stroke = new SolidColorBrush(getPowerLineColor(lineObj));
+                    }
                     break;
                 case "IsHighLighted":
                     // get the lineDataObject and update the Polyline color
                     lineObj = sender as PowerLayerLineObj;
-                    lineObj.polyLine_.Stroke = new SolidColorBrush(getPowerLineColor(lineObj));
+                    if (lineObj != null)
+                    {
+                        lineObj.polyLine_.Stroke = new SolidColorBrush(getPowerLineColor(lineObj));
+                        break;
+                    }
+                    var borderObj = sender as PowerLayerBorderObj;
+                    if (borderObj != null)
+                    {
+                        borderObj.polyLine_.Stroke = new SolidColorBrush(getBorderColor(borderObj));
+                        break;
+                    }
                     break;
                 case "LinePoints":
                     // get the lineDataObject and update the Polyline points
                     lineObj = sender as PowerLayerLineObj;
-                    lineObj.polyLine_.Points = getPowerLineCanvasPoints(lineObj);
+                    if (lineObj != null)
+                    {
+                        lineObj.polyLine_.Points = getPowerLineCanvasPoints(lineObj.lineDataObj_.linePoints_);
+                        break;
+                    }
+                    borderObj = sender as PowerLayerBorderObj;
+                    if (borderObj != null)
+                    {
+                        borderObj.polyLine_.Points = getPowerLineCanvasPoints(borderObj.borderDataObj_.linePoints_);
+                        break;
+                    }
                     break;
                 case "LayerName":
                     // do something
                     break;
                 case "IsLayerVisible":
                     var layerObj = sender as PowerLayerObj;
-                    bool isVisible = layerObj.IsLayerVisible;
-                    foreach (PowerLayerLineObj powerLayerLineObj in layerObj.powerLayerLineObjs_)
+                    if (layerObj != null)
                     {
-                        if (isVisible)
+                        bool isVisible = layerObj.IsLayerVisible;
+                        foreach (PowerLayerLineObj powerLayerLineObj in layerObj.powerLayerLineObjs_)
                         {
-                            // add all the layer lines to the canvas if isVisible is true
-                            addElementToCanvas(powerLayerLineObj.polyLine_);
+                            if (isVisible)
+                            {
+                                // add all the layer lines to the canvas if isVisible is true
+                                addElementToCanvas(powerLayerLineObj.polyLine_);
+                            }
+                            else
+                            {
+                                // remove all the layer lines from the canvas if isVisible is false
+                                removeElementFromCanvas(powerLayerLineObj.polyLine_);
+                            }
                         }
-                        else
+                        foreach (PowerLayerBorderObj powerLayerBorderObj in layerObj.powerLayerBorderObjs_)
                         {
-                            // remove all the layer lines from the canvas if isVisible is false
-                            removeElementFromCanvas(powerLayerLineObj.polyLine_);
+                            if (isVisible)
+                            {
+                                // add all the layer lines to the canvas if isVisible is true
+                                addElementToCanvas(powerLayerBorderObj.polyLine_);
+                            }
+                            else
+                            {
+                                // remove all the layer lines from the canvas if isVisible is false
+                                removeElementFromCanvas(powerLayerBorderObj.polyLine_);
+                            }
                         }
                     }
                     break;
