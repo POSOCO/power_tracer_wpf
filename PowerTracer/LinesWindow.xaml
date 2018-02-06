@@ -18,7 +18,7 @@
                     <MenuItem Header="_Exit" Click="Exit_Click"/>
                 </MenuItem>
                 <MenuItem Header="_Edit" />
-                <MenuItem Header="_View" />
+                <MenuItem Header="_View" Click="View_Click"/>
                 <MenuItem Header="_Window" />
                 <MenuItem Header="_Help">
                     <MenuItem Header="Draw" Click="Draw_Click"/>

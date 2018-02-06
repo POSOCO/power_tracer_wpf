@@ -79,6 +79,11 @@ namespace PowerTracer
             linesWindow.Show();
         }
 
+        private void View_Click(object sender, RoutedEventArgs e)
+        {
+            DDLParser.DDLParser.parseDDLToJSON();
+        }
+
         public void addLinesToConsole(string str)
         {
             // todo allow other threads to write here just like we did in the reporting tool
@@ -125,6 +130,6 @@ namespace PowerTracer
                     // do something
                     break;
             }
-        }
+        }        
     }
 }

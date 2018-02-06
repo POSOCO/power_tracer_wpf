@@ -96,6 +96,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DDLParser\DDLParser.cs" />
     <Compile Include="PowerLayerBorderObj.cs" />
     <Compile Include="PowerLayerBorderDataObj.cs" />
     <Compile Include="PowerLayerLineObj.cs" />
@@ -132,6 +133,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="DDLParser\mapboard.ddl" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
