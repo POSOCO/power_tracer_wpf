@@ -80,3 +80,17 @@ diameter(19)
 
 ^\s*diameter\s*\((<diameter>d+)\)\s*$
 --- circle diamater setter ---
+
+Search for layers in diaplay
+
+Search for polylines, circles, text in layer
+
+Search for gab, cam, origin, point in polyline
+
+Search for composite_key in cam
+
+Search for record key in composite_key
+
+Search for gab, origin, localize in text
+
+Search for origin,diamter,gab in circle
