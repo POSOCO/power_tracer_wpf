@@ -1,0 +1,82 @@
+---block start---
+^\s*(<block_name>.+)\s*$
+(
+---block start---
+
+---Display block start---
+display "ABT_SR"
+(
+
+^\s*display\s+\"(<display>.+)\"\s*$
+(
+---Display block start---
+
+---Layer block start---
+simple_layer "DEFAULT"
+(
+
+^\s*simple_layer\s+\"(<layer>.+)\"\s*$
+(
+---Layer block start---
+
+---Polyline block start---
+^\s*polyline\s*$
+(
+---Polyline block start---
+
+---Text block start---
+^\s*text\s*$
+(
+---Text block start---
+
+---Circle block start---
+^\s*circle\s*$
+(
+---Circle block start---
+
+---gab block start---
+^\s*gab\s*\(\s*$
+---gab block start---
+
+--- cam block start ---
+^\s*cam\s*\"(<cam>.+)\"\s*$
+(
+--- cam block start ---
+
+---composite_key block start---
+^\s*composite_key\s*$
+(
+---composite_key block start---
+
+--- gab property setter ---
+gab "SOLID_WHITE_1"
+
+^\s*gab\s+\"(<gab>.+)\"\s*$
+--- gab property setter ---
+
+--- origin property setter ---
+origin(2265 2797)
+^\s*origin\s*\((<x_num>\[\+-]?\s*d+)\s+(<y_num>\[\+-]?\s*d+)\s*\)\s*$
+--- origin property setter ---
+
+--- point property setter ---
+point(2265 2801)
+^\s*point\s*\((<x_num>\[\+-]?\s*d+)\s+(<y_num>\[\+-]?\s*d+)\s*\)\s*$
+--- point property setter ---
+
+--- record key property setter ---
+record("SUBSTN") record_key("CHDPR_MH")
+^\s*record\s*\(\"(<record>.+)\"\)\s+record_key\s*\(\"(<record_key>.+)\"\)\s*$
+--- record key property setter ---
+
+--- text string setter ---
+localize "Nimrani"
+
+^\s*localize\s*\"(<text_content>.+)\"\s*$
+--- text string setter ---
+
+--- circle diamater setter ---
+diameter(19)
+
+^\s*diameter\s*\((<diameter>d+)\)\s*$
+--- circle diamater setter ---
