@@ -82,7 +82,6 @@ namespace PowerTracer
                     PowerLayerObj layer = new PowerLayerObj();
                     layer.layerName_ = jsonLayer.name;
                     // Console.WriteLine("\t" + jsonLayer.name);
-                    //stub
                     foreach (dynamic layerLine in jsonLayer.polyLines)
                     {
                         // Create a power line if voltage is either 400 or 765 kV else make it a border line

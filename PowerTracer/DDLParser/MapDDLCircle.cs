@@ -9,9 +9,9 @@ namespace PowerTracer.DDLParser
 {
     class MapDDLCircle
     {
-        string gab;
-        double diameter;
-        public Point origin { get; set; }
+        public string gab { get; set; }
+        public double diameter { get; set; }
+        public Point origin { get; set; } = new Point(Double.NaN, Double.NaN);
         public MapDDLCam cam { get; set; }
         public string eDNAId { get; set; }
     }

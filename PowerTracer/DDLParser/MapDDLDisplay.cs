@@ -8,6 +8,7 @@ namespace PowerTracer.DDLParser
 {
     class MapDDLDisplay
     {
+        public string name { get; set; }
         public List<MapDDLLayer> layers { get; set; } = new List<MapDDLLayer>();
     }
 }

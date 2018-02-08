@@ -9,7 +9,8 @@ namespace PowerTracer.DDLParser
 {
     class MapDDLPicture
     {
-        public Point origin { get; set; }
+        public string name { get; set; }
+        public Point origin { get; set; } = new Point(Double.NaN, Double.NaN);
         public string gab { get; set; }
         public MapDDLCam cam { get; set; }
         public string eDNAId { get; set; }

@@ -97,9 +97,9 @@ Search for origin,diamter,gab in circle
 
 Level 1 - Display
 Level 2 - Layer
-Level 3 - Polyline, Text, Circle
+Level 3 - Polyline, Text, Circle, Picture
 Level 4 - diameter, origin, point, gab, cam
-Level 7 - Composite key
+Level 5 - Composite key
 Level 6 - Record, Record_key
 
 Donot regex check for level n+ elements till level n element is initialized. 

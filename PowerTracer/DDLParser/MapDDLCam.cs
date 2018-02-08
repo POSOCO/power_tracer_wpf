@@ -9,6 +9,6 @@ namespace PowerTracer.DDLParser
     class MapDDLCam
     {
         public string name { get; set; }
-        public IDictionary<String, String> compositeKey { get; set; }
+        public IDictionary<string, string> compositeKey { get; set; }
     }
 }

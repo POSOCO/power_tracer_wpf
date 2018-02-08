@@ -9,7 +9,7 @@ namespace PowerTracer.DDLParser
 {
     class MapDDLPolyline
     {
-        public Point origin { get; set; }
+        public Point origin { get; set; } = new Point(Double.NaN, Double.NaN);
         public List<Point> points { get; set; }
         public string gab { get; set; }
         public MapDDLCam cam { get; set; }
