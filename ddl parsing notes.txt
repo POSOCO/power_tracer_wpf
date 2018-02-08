@@ -99,6 +99,24 @@ Level 1 - Display
 Level 2 - Layer
 Level 3 - Polyline, Text, Circle
 Level 4 - diameter, origin, point, gab, cam
-Level 5 - Record, Record_key
+Level 7 - Composite key
+Level 6 - Record, Record_key
 
-Whenever we find the origin wrap up the level 3 element that has the origin and add it to the respective array
+Donot regex check for level n+ elements till level n element is initialized. 
+If a we get all the required attributes of a level 3 element, then wrap it up (donot do regex check for level 4 and 5 elements).
+Whenever we find the origin wrap up the level 3 element that has the origin and add it to the respective array.
+Donot regex check for level 4+ elements till we initialize origin.
+Donot regex check for composite key elements till we initialize the cam object.
+Donot regex check for record and record key elements till we initialize the composite key object.
+
+Occurances
+----------
+Origin - 16,957
+Point - 12,690
+Picture - 10,037
+gab - 6,422
+Polyline - 4,032
+cam - 3,153
+Text - 1,744
+Circle - 534
+
