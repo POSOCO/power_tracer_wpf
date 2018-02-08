@@ -97,6 +97,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DDLParser\DDLParser.cs" />
+    <Compile Include="DDLParser\MapDDL.cs" />
+    <Compile Include="DDLParser\MapDDLCam.cs" />
+    <Compile Include="DDLParser\MapDDLCircle.cs" />
+    <Compile Include="DDLParser\MapDDLDisplay.cs" />
+    <Compile Include="DDLParser\MapDDLLayer.cs" />
+    <Compile Include="DDLParser\MapDDLPicture.cs" />
+    <Compile Include="DDLParser\MapDDLPolyline.cs" />
+    <Compile Include="DDLParser\MapDDLText.cs" />
     <Compile Include="PowerLayerBorderObj.cs" />
     <Compile Include="PowerLayerBorderDataObj.cs" />
     <Compile Include="PowerLayerLineObj.cs" />

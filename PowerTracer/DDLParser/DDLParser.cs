@@ -24,11 +24,13 @@ namespace PowerTracer.DDLParser
         public static Regex pointRegex_ = new Regex(@"^\s*point\s*\((?<x_num>[\+-]?\s*\d+)\s+(?<y_num>[\+-]?\s*\d+)\s*\)\s*$", RegexOptions.Compiled);
         public static Regex recorKeyRegex_ = new Regex(@"^\s*record\s*\(""(?<record>.+)""\)\s+record_key\s*\(""(?<record_key>.+)""\)\s*$", RegexOptions.Compiled);
         public static Regex textStringRegex_ = new Regex(@"^\s*localize\s*""(?<text_content>.+)""\s*$", RegexOptions.Compiled);
+        public static Regex pictureBlockStartRegex_ = new Regex(@"^\s*picture\s+""(?<picture>.+)""\s*$", RegexOptions.Compiled);
         public static Regex diameterRegex_ = new Regex(@"^\s*diameter\s*\((?<diameter>\d+)\)\s*$", RegexOptions.Compiled);
 
         public static void parseDDLToJSON()
         {
             string currBlockType = "";
+            bool includePictures = false;
             foreach (string line in File.ReadLines("mapboard.ddl"))
             {
                 // search for display start
@@ -101,6 +103,18 @@ namespace PowerTracer.DDLParser
                     Console.WriteLine("\t\t\t\t\tRecord {0} = {1}", record, record_key);
                     continue;
                 }
+                if (includePictures)
+                {
+                    // search for pictureBlock start
+                    matches = pictureBlockStartRegex_.Matches(line);
+                    if (matches.Count > 0)
+                    {
+                        currBlockType = "picture";
+                        string pictureName = matches[0].Groups["picture"].Value;
+                        Console.WriteLine("\t\tPicture {0}", pictureName);
+                        continue;
+                    }
+                }                
                 // search for textBlock start
                 matches = textBlockStartRegex_.Matches(line);
                 if (matches.Count > 0)

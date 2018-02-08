@@ -81,7 +81,7 @@ diameter(19)
 ^\s*diameter\s*\((<diameter>d+)\)\s*$
 --- circle diamater setter ---
 
-Search for layers in diaplay
+Search for layers in display
 
 Search for polylines, circles, text in layer
 
@@ -94,3 +94,11 @@ Search for record key in composite_key
 Search for gab, origin, localize in text
 
 Search for origin,diamter,gab in circle
+
+Level 1 - Display
+Level 2 - Layer
+Level 3 - Polyline, Text, Circle
+Level 4 - diameter, origin, point, gab, cam
+Level 5 - Record, Record_key
+
+Whenever we find the origin wrap up the level 3 element that has the origin and add it to the respective array
