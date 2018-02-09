@@ -176,10 +176,7 @@ namespace PowerTracer.DDLParser
                     insertLevel2ObjIntoLevel1(level2Layer, level1Display);
                     level2Layer = null;
                     // add previous display object to the mapDDL displays array
-                    if (level1Display != null)
-                    {
-                        mapDDL.displays.Add(level1Display);
-                    }
+                    insertLevel1ObjIntoMap(level1Display, mapDDL);
                     string displayName = matches[0].Groups["display"].Value;
                     Console.WriteLine("Display {0}", displayName);
                     level1Display = new MapDDLDisplay();
@@ -278,7 +275,7 @@ namespace PowerTracer.DDLParser
                     matches = originRegex_.Matches(lineText);
                     if (matches.Count > 0)
                     {
-                        if (origin.X != Double.NaN)
+                        if (!Double.IsNaN(origin.X))
                         {
                             // Whenever we find the origin, wrap up the level 3 element that has the origin and add it to the respective array.
                             // wrap up below levels
@@ -297,12 +294,15 @@ namespace PowerTracer.DDLParser
                     }
 
                     // Donot regex check for level 4+ elements till we initialize origin.
-                    if (origin.X != Double.NaN)
+                    if (!Double.IsNaN(origin.X))
                     {
                         // search for gab
                         matches = gabRegex_.Matches(lineText);
                         if (matches.Count > 0)
                         {
+                            // wrap up below levels
+                            insertLevel4ObjIntoLevel3(level3Obj, level4Obj);
+                            level4Obj = null;
                             // add gab to the level3Object
                             string gabText = matches[0].Groups["gab"].Value;
                             assignGabToLevel3Obj(level3Obj, gabText);
@@ -329,6 +329,9 @@ namespace PowerTracer.DDLParser
                             matches = pointRegex_.Matches(lineText);
                             if (matches.Count > 0)
                             {
+                                // wrap up the level 4 object
+                                insertLevel4ObjIntoLevel3(level3Obj, level4Obj);
+                                level4Obj = null;
                                 string x_num = matches[0].Groups["x_num"].Value;
                                 string y_num = matches[0].Groups["y_num"].Value;
                                 // add points to the polyline points list
@@ -344,10 +347,31 @@ namespace PowerTracer.DDLParser
                             matches = diameterRegex_.Matches(lineText);
                             if (matches.Count > 0)
                             {
+                                // wrap up the level 4 object
+                                insertLevel4ObjIntoLevel3(level3Obj, level4Obj);
+                                level4Obj = null;
                                 string diameter = matches[0].Groups["diameter"].Value;
                                 // assign diameter to the circle
                                 ((MapDDLCircle)level3Obj).diameter = Double.Parse(diameter);
                                 Console.WriteLine("\t\t\tDiameter {0}", diameter);
+                                continue;
+                            }
+                        }
+
+                        // localize is present in only text element. So the level 3 element should be text
+                        if (level3Obj.GetType().FullName == typeof(MapDDLText).FullName)
+                        {
+                            // search for text localize
+                            matches = textStringRegex_.Matches(lineText);
+                            if (matches.Count > 0)
+                            {
+                                // wrap up the level 4 object
+                                insertLevel4ObjIntoLevel3(level3Obj, level4Obj);
+                                level4Obj = null;
+                                string textContent = matches[0].Groups["text_content"].Value;
+                                Console.WriteLine("\t\t\tText Content {0}", textContent);
+                                // assign diameter to the circle
+                                ((MapDDLText)level3Obj).localize = textContent;
                                 continue;
                             }
                         }
@@ -378,48 +402,17 @@ namespace PowerTracer.DDLParser
                     continue;
                 }
                 */
-
-
-
-                // search for text localize
-                matches = textStringRegex_.Matches(lineText);
-                if (matches.Count > 0)
-                {
-                    string textContent = matches[0].Groups["text_content"].Value;
-                    Console.WriteLine("\t\t\tText Content {0}", textContent);
-                    continue;
-                }
-
-
             }
-        }
-
-        private static void insertLevel3ObjIntoLevel2(object level3Obj, MapDDLLayer level2Layer)
-        {
-            // add previous level 3 object to the mapDDL display layer level3 objects array
-            if (level3Obj != null && level2Layer != null)
-            {
-                if (level3Obj.GetType().FullName == typeof(MapDDLPolyline).FullName)
-                {
-                    // the level 3 object was a polyline
-                    level2Layer.polylines.Add((MapDDLPolyline)level3Obj);
-                }
-                else if (level3Obj.GetType().FullName == typeof(MapDDLCircle).FullName)
-                {
-                    // the level 3 object was a circle
-                    level2Layer.circles.Add((MapDDLCircle)level3Obj);
-                }
-                else if (level3Obj.GetType().FullName == typeof(MapDDLText).FullName)
-                {
-                    // the level 3 object was a circle
-                    level2Layer.texts.Add((MapDDLText)level3Obj);
-                }
-                else if (level3Obj.GetType().FullName == typeof(MapDDLPicture).FullName)
-                {
-                    // the level 3 object was a circle
-                    level2Layer.pictures.Add((MapDDLPicture)level3Obj);
-                }
-            }
+            // Now wrap up everything left into the mapDDL
+            insertLevel4ObjIntoLevel3(level3Obj, level4Obj);
+            level4Obj = null;
+            insertLevel3ObjIntoLevel2(level3Obj, level2Layer);
+            level3Obj = null;
+            insertLevel2ObjIntoLevel1(level2Layer, level1Display);
+            level2Layer = null;
+            // add previous display object to the mapDDL displays array
+            insertLevel1ObjIntoMap(level1Display, mapDDL);
+            // level1Display = null;
         }
 
         private static Point getLevel3ObjOrigin(object level3Obj)
@@ -503,11 +496,47 @@ namespace PowerTracer.DDLParser
             }
         }
 
+        private static void insertLevel3ObjIntoLevel2(object level3Obj, MapDDLLayer level2Layer)
+        {
+            // add previous level 3 object to the mapDDL display layer level3 objects array
+            if (level3Obj != null && level2Layer != null)
+            {
+                if (level3Obj.GetType().FullName == typeof(MapDDLPolyline).FullName)
+                {
+                    // the level 3 object was a polyline
+                    level2Layer.polylines.Add((MapDDLPolyline)level3Obj);
+                }
+                else if (level3Obj.GetType().FullName == typeof(MapDDLCircle).FullName)
+                {
+                    // the level 3 object was a circle
+                    level2Layer.circles.Add((MapDDLCircle)level3Obj);
+                }
+                else if (level3Obj.GetType().FullName == typeof(MapDDLText).FullName)
+                {
+                    // the level 3 object was a circle
+                    level2Layer.texts.Add((MapDDLText)level3Obj);
+                }
+                else if (level3Obj.GetType().FullName == typeof(MapDDLPicture).FullName)
+                {
+                    // the level 3 object was a circle
+                    level2Layer.pictures.Add((MapDDLPicture)level3Obj);
+                }
+            }
+        }
+
         public static void insertLevel2ObjIntoLevel1(MapDDLLayer level2Layer, MapDDLDisplay level1Display)
         {
             if (level2Layer != null)
             {
                 level1Display.layers.Add(level2Layer);
+            }
+        }
+
+        public static void insertLevel1ObjIntoMap(MapDDLDisplay level1Display, MapDDL mapDDL)
+        {
+            if (level1Display != null)
+            {
+                mapDDL.displays.Add(level1Display);
             }
         }
     }

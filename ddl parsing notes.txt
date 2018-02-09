@@ -98,7 +98,7 @@ Search for origin,diamter,gab in circle
 Level 1 - Display
 Level 2 - Layer
 Level 3 - Polyline, Text, Circle, Picture
-Level 4 - diameter, origin, point, gab, cam
+Level 4 - diameter, origin, point, localize, gab, cam
 Level 5 - Composite key
 Level 6 - Record, Record_key
 
