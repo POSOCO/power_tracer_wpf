@@ -151,7 +151,7 @@ namespace PowerTracer.DDLParser
             }
         }
 
-        public static void parseDDLToJSON()
+        public static MapDDL parseDDLToObject()
         {
             // string currBlockType = "";
             MapDDLDisplay level1Display = null;
@@ -413,6 +413,7 @@ namespace PowerTracer.DDLParser
             // add previous display object to the mapDDL displays array
             insertLevel1ObjIntoMap(level1Display, mapDDL);
             // level1Display = null;
+            return mapDDL;
         }
 
         private static Point getLevel3ObjOrigin(object level3Obj)

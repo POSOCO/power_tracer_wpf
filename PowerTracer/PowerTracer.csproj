@@ -81,6 +81,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="DDLParser\DDLParsingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="LinesWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -97,6 +101,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DDLParser\DDLParser.cs" />
+    <Compile Include="DDLParser\DDLParsingWindow.xaml.cs">
+      <DependentUpon>DDLParsingWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DDLParser\MapDDL.cs" />
     <Compile Include="DDLParser\MapDDLCam.cs" />
     <Compile Include="DDLParser\MapDDLCircle.cs" />

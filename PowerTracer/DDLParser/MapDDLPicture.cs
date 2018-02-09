@@ -9,6 +9,7 @@ namespace PowerTracer.DDLParser
 {
     class MapDDLPicture
     {
+        public bool isExportable { get; set; } = true;
         public string name { get; set; }
         public Point origin { get; set; } = new Point(Double.NaN, Double.NaN);
         public string gab { get; set; }

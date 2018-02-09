@@ -20,8 +20,11 @@
                 <MenuItem Header="_Edit" />
                 <MenuItem Header="_View" Click="View_Click"/>
                 <MenuItem Header="_Window" />
-                <MenuItem Header="_Help">
+                <MenuItem Header="_Tools">
                     <MenuItem Header="Draw" Click="Draw_Click"/>
+                    <MenuItem Header="DDLParse" Click="DDLParse_Click"/>
+                </MenuItem>
+                <MenuItem Header="_Help">
                     <MenuItem Header="_About" Click="About_Click"/>
                 </MenuItem>
                 <MenuItem Click="ZoomPlus_click">

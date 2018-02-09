@@ -9,6 +9,7 @@ namespace PowerTracer.DDLParser
 {
     class MapDDLPolyline
     {
+        public bool isExportable { get; set; } = true;
         public Point origin { get; set; } = new Point(Double.NaN, Double.NaN);
         public List<Point> points { get; set; } = new List<Point>();
         public string gab { get; set; }

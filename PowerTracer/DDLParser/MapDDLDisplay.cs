@@ -8,6 +8,7 @@ namespace PowerTracer.DDLParser
 {
     class MapDDLDisplay
     {
+        public bool isExportable { get; set; } = true;
         public string name { get; set; }
         public List<MapDDLLayer> layers { get; set; } = new List<MapDDLLayer>();
     }

@@ -9,6 +9,7 @@ namespace PowerTracer.DDLParser
 {
     class MapDDLText
     {
+        public bool isExportable { get; set; } = true;
         public Point origin { get; set; } = new Point(Double.NaN, Double.NaN);
         public string gab { get; set; }
         public string localize { get; set; }

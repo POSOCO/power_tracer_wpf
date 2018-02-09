@@ -8,6 +8,7 @@ namespace PowerTracer.DDLParser
 {
     class MapDDLCam
     {
+        public bool isExportable { get; set; } = true;
         public string name { get; set; }
         public IDictionary<string, string> compositeKey { get; set; }
     }

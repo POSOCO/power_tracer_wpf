@@ -81,7 +81,13 @@ namespace PowerTracer
 
         private void View_Click(object sender, RoutedEventArgs e)
         {
-            DDLParser.DDLParser.parseDDLToJSON();
+            addLinesToConsole("You clicked 'Reset...'");
+        }
+
+        private void DDLParse_Click(object sender, RoutedEventArgs e)
+        {
+            DDLParser.DDLParsingWindow ddlParsingWindow = new DDLParser.DDLParsingWindow();
+            ddlParsingWindow.Show();
         }
 
         public void addLinesToConsole(string str)
@@ -130,6 +136,7 @@ namespace PowerTracer
                     // do something
                     break;
             }
-        }        
+        }
+
     }
 }

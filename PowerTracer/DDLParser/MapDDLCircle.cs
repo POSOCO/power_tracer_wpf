@@ -9,6 +9,7 @@ namespace PowerTracer.DDLParser
 {
     class MapDDLCircle
     {
+        public bool isExportable { get; set; } = true;
         public string gab { get; set; }
         public double diameter { get; set; }
         public Point origin { get; set; } = new Point(Double.NaN, Double.NaN);
