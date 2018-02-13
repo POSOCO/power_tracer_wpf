@@ -269,6 +269,19 @@ namespace PowerTracer.DDLParser
 
                 if (level3Obj != null)
                 {
+                    // search for camBlockStart
+                    matches = camBlockStartRegex_.Matches(lineText);
+                    if (matches.Count > 0)
+                    {
+                        // wrap up the level 4 object
+                        insertLevel4ObjIntoLevel3(level3Obj, level4Obj);
+                        level4Obj = new MapDDLCam();
+                        string camName = matches[0].Groups["cam"].Value;
+                        ((MapDDLCam)level4Obj).name = camName;
+                        Console.WriteLine("\t\t\tCam {0}", camName);
+                        continue;
+                    }
+
                     // find level 3 object origin
                     Point origin = getLevel3ObjOrigin(level3Obj);
                     // search for origin only if we have a non null level 3 object (Polyline, Text, Circle, Picture)
@@ -307,19 +320,6 @@ namespace PowerTracer.DDLParser
                             string gabText = matches[0].Groups["gab"].Value;
                             assignGabToLevel3Obj(level3Obj, gabText);
                             Console.WriteLine("\t\t\tGab {0}", gabText);
-                            continue;
-                        }
-
-                        // search for camBlockStart
-                        matches = camBlockStartRegex_.Matches(lineText);
-                        if (matches.Count > 0)
-                        {
-                            // wrap up the level 4 object
-                            insertLevel4ObjIntoLevel3(level3Obj, level4Obj);
-                            level4Obj = new MapDDLCam();
-                            string camName = matches[0].Groups["cam"].Value;
-                            ((MapDDLCam)level4Obj).name = camName;
-                            Console.WriteLine("\t\t\tCam {0}", camName);
                             continue;
                         }
 

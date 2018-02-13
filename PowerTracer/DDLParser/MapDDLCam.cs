@@ -10,6 +10,6 @@ namespace PowerTracer.DDLParser
     {
         public bool isExportable { get; set; } = true;
         public string name { get; set; }
-        public IDictionary<string, string> compositeKey { get; set; }
+        public Dictionary<string, string> compositeKey { get; set; } = new Dictionary<string, string>();
     }
 }

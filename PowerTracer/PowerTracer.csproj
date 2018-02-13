@@ -108,6 +108,7 @@
     <Compile Include="DDLParser\MapDDLCam.cs" />
     <Compile Include="DDLParser\MapDDLCircle.cs" />
     <Compile Include="DDLParser\MapDDLDisplay.cs" />
+    <Compile Include="DDLParser\MapDDLJSON.cs" />
     <Compile Include="DDLParser\MapDDLLayer.cs" />
     <Compile Include="DDLParser\MapDDLPicture.cs" />
     <Compile Include="DDLParser\MapDDLPolyline.cs" />
