@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -58,7 +60,23 @@ namespace PowerTracer.DDLParser
             dc.addItemsToConsole("Started Parsing the ddl...");
             mapDDL = DDLParser.parseDDLToObject();
             mapBoardTV.ItemsSource = mapDDL.displays;
-            dc.addItemsToConsole("Finished Parsing the ddl!");
+            dc.addItemsToConsole("Finished Parsing the ddl!");            
+        }
+
+        private void saveMapDDLJSON_Click(object sender, RoutedEventArgs e)
+        {
+            // https://stackoverflow.com/questions/5136254/saving-file-using-savefiledialog-in-c-sharp
+            // http://www.wpf-tutorial.com/dialogs/the-savefiledialog/
+            SaveFileDialog savefileDialog = new SaveFileDialog();
+            // set a default file name
+            savefileDialog.FileName = "test.json";
+            // set filters - this can be done in properties as well
+            savefileDialog.Filter = "JSON Files (*.json)|*.json|All files (*.*)|*.*";
+
+            if (savefileDialog.ShowDialog() == true)
+            {
+                File.WriteAllText(savefileDialog.FileName, "Hello World ! \n Just saving the file...");                
+            }
         }
     }
 }

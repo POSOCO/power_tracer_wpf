@@ -53,6 +53,7 @@
             </ScrollViewer>
             <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5">
                 <Button Content="Parse DDL" Click="Parse_Click"></Button>
+                <Button Content="Save DDL JSON" Click="saveMapDDLJSON_Click"></Button>
             </StackPanel>
         </Grid>
     </Grid>
